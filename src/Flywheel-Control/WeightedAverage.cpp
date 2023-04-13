@@ -48,13 +48,15 @@ void WeightedAverage::addValue(const double value){
   list.erase(list.begin());
 }
 
+//Test
+
 // ---------------- GET WEIGHTED AVERAGE ---------------- //
 // Uses the Weighted average formula to find the best average
 // Newer values have a greater effect on the end value than older values
 double WeightedAverage::getWeightedAverage(){
   double result=0; // Delcare resulting value
 
-  // Summate all of the values
+  // Summate all of the values 
   for(int i=0; i<list.size(); i++)
     result+=list.at(i)*(i+1);
 
