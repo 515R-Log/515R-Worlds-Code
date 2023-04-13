@@ -1,0 +1,1 @@
+void detect_motor_disconnect();
