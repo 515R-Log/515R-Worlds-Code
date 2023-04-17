@@ -47,7 +47,7 @@ void WeightedAverage::addValue(const double value){
   list.push_back(value); // Add value to that back
   list.erase(list.begin());
 }
-
+ //dfs
 //Test
 
 // ---------------- GET WEIGHTED AVERAGE ---------------- //

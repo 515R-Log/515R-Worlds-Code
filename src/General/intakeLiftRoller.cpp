@@ -73,10 +73,12 @@ void setRollerMotor(){
 
 // Define different modes of lifting task
 enum lMode {L_DISABLE=0, L_INIT=1, L_NEUTRAL=2, L_DETECT=3, L_REMOVE=4, L_RESET=5};
-enum lDetect {L_DETECT_NONE=0, L_DETECT_TOP=400, L_DETECT_BOTTOM=200};
+enum lDetect {L_DETECT_TOP=400, L_DETECT_BOTTOM=200};
+enum lRemove {L_REMOVE_TOP=300, L_REMOVE_BOTTOM=100};
 
 lMode liftMode = L_DISABLE; // Set the default mode as disabled
-lDetect lift_detect = L_DETECT_NONE;
+lDetect lift_detect = L_DETECT_TOP;
+lRemove lift_removal_time = L_REMOVE_TOP;
 short liftTime = 0; // Declare the intake time as 0 
 
 // Create a function to simplify switching modes of lift task
@@ -104,9 +106,14 @@ void antiJamAsyncIterate(){
       // ----- DETECT JAM -- 0ms for Confidence- //
       break; case L_NEUTRAL:
       if(detected){
+        
         lift_detect=L_DETECT_TOP;
-        if(rollerMtr.is_over_current())
+        lift_removal_time=L_REMOVE_TOP;
+
+        if(rollerMtr.is_over_current()){
           lift_detect=L_DETECT_BOTTOM;
+          lift_removal_time=L_REMOVE_BOTTOM;
+        }
         updateLiftMode(L_DETECT); // Begin spinning intake in reverse
       }
 
@@ -121,7 +128,10 @@ void antiJamAsyncIterate(){
       break; case L_REMOVE:
       setLift(-127); // Spin in reverse
 
-      if(liftTime>250)
+      if(lift_detect==L_DETECT_BOTTOM && rollerMtr.is_over_current() && liftTime>=20)
+        liftTime-=20;
+
+      else if(liftTime>lift_removal_time)
         updateLiftMode(L_RESET); // Start intake up again
 
       // ----- RESTART INTAKE -- 400ms until Complete -- //

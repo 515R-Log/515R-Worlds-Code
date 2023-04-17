@@ -34,7 +34,7 @@ void quickRoller(int leftSpeed, int rightSpeed, int startTime, int startSpeed){
   pros::delay(startTime);
 
   // Drive into roller
-  quickRollerShort(leftSpeed, rightSpeed, 200);
+  quickRollerShort(leftSpeed, rightSpeed, 140);
 }
 
 // ----------------- QUICK ROLLER SHORT ----------------- //

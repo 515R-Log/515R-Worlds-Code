@@ -33,7 +33,7 @@ The process of scoring disks is as follows:
 void hailMary(short discs, drop_off dropOff, int time_out){
 
   // Set Flywheel target to max temporarily
-  double indexRPM=getFlywheelTarget()-dropOff;
+  double indexRPM=getFlywheelTarget()-dropOff+25;
   setFlywheel(9000);
 
   // Use slow scoring function with our max accelleration
@@ -66,23 +66,16 @@ void updateShootSettings(sState new_score_state, short index_speed){
   std::cout << scoreState << endl;
 }
 
-PotMgr autoSwitches2('H'); // Initialize Autonomous Selection Potentiometer
-
 void hailMarySlow(short discs, double indexRPM, int time_out){
 
   int start_time=pros::millis();
 
   scoreState = S_WAITING;
 
-  autoSwitches2.set_max(100);
-	autoSwitches2.set_min(-50);
-	autoSwitches2.set_direction(false);
-
-  short reset_speed = 127;
+  short reset_speed = 80;
   setRoller(reset_speed);
 
-  short index_rotation = 39.8;
-  short reset_rotation = autoSwitches2.get_value();
+  short reset_rotation = 4;
 
   if(indexRPM==-1)
     indexRPM=getFlywheelTarget();
@@ -95,34 +88,19 @@ void hailMarySlow(short discs, double indexRPM, int time_out){
   int endTime=pros::millis()+time_out;
 
   // While all discs have NOT been shot and there is still time remaining
-  while(distStack.get()<175 && (pros::millis()<endTime || time_out == -1)){
+  while(distStack.get()<190 && (pros::millis()<endTime || time_out == -1)){
 
-    // switch (scoreState)
-    // {
-    //   case S_WAITING:
-    //   if(shooterMtr.get_velocity()>indexRPM)
-    //     updateShootSettings(S_OUTWARDS,-127);
-      
-    //   break;  case S_OUTWARDS:
-    //   if(start_rotation-index_rotation>rollerMtr.get_position())
-    //     updateShootSettings(S_RESET,reset_speed);
-
-    //   break;  case S_RESET:
-    //   if(start_rotation+reset_rotation<rollerMtr.get_position())
-    //     updateShootSettings(S_WAITING,reset_speed);
-
-    //   break;
-    // }
+    bool last_disc = distStack.get()>150;
 
     switch (scoreState)
     {
       case S_WAITING:
-      if(shooterMtr.get_velocity()>indexRPM)
-        updateShootSettings(S_OUTWARDS,-127);
+      if(shooterMtr.get_velocity()>indexRPM - last_disc*8);
+        updateShootSettings(S_OUTWARDS,-90);
       
       break;  case S_OUTWARDS:
-      if(distIndex.get()<90)
-        updateShootSettings(S_RESET,reset_speed);
+      if(distIndex.get()<97)
+        updateShootSettings(S_RESET,127);
 
       break;  case S_RESET:
       if(start_rotation+reset_rotation<rollerMtr.get_position())
@@ -130,30 +108,8 @@ void hailMarySlow(short discs, double indexRPM, int time_out){
 
       break;
     }
-
-    // OG VERSION
-    // // If the flywheel is ready to score, send the indexer to score
-    // if(shooterMtr.get_velocity()>indexRPM)
-    //   indexPower=-127;
-
-    // // If the disc is about to touch the flywheel, turn off the index.
-    // // This prevents the indexer to coast a second disc into the flywheel
-    // if(distIndex.get()<90){
-    //   indexPower=20;
-    //   discScoring=true;
-    // }
-    // else if(distIndex.get()>96 && discScoring){
-    //   discScoring=false;
-    //   discCount++;
-    // }
-
-    // setRoller(indexPower);
-
-    // timeseres+=10;
     pros::delay(20);
   }
-
-  std::cout << "SHOOTING DONE" << endl;
 
   score_time=pros::millis()-start_time;
 

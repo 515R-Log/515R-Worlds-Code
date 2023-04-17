@@ -32,13 +32,61 @@ We have two alternative Right-side Support Programs.
 -----------------------------------------------------------------------------*/
 
 void Right_Side(){
+  // ----- INITIALIZE AUTONOMOUS ----- //
+  setFlywheel(545); // Prepare flywheel to score
+
+  // ----- CLAIM TOP ROLLER ----- //
+  chassis.drive_pid(-21,130); // Drive towards Roller
+  chassis.turn_pid(90); // Turn towards roller
+  chassis.drive_pid(-6,130,false); // Drive into roller
+
+  chassis.set_mode(ez::DISABLE);
+
+  quickRoller(0,-30); // Run a command that spins the lift for a short time
+
+  // ----- COLLECT DISC ----- //
+  chassis.drive_pid(4,130); // Drive away from goal
+  setRoller(127); // Prepare lift to pick up disc
+  chassis.turn_pid(145,190); // Turn towards autonomous line disc
+
+  enableAutoIntake();
+  chassis.drive_pid(10,130); // Drive into disc
+
+  // ----- SCORE DISCS ----- //
+  chassis.drive_pid(-7.5,130,false); // Drive away from autonomus line
+  chassis.turn_pid(100,90); // Turn towards goal
+  hailMary(3); // Run a command that scores the row of discs
+
+  disableAutoIntake();
+  setRoller(0);
+
+  // ----- COLLECT DISCS ----- //
+  setFlywheel(530);
+  enableAutoIntake();
+  chassis.turn_pid(44,110); // Turn towards row of discs
+  setRoller(127); // Prepare Intake to pick up discs
+
+  chassis.drive_pid(61,80,false); // Drive into row of discs
+  chassis.drive_pid(-17,130,false); // Drive into row of discs
+  chassis.turn_pid(121.5); // Turn towards goal
+  disableAutoIntake();
+
+  hailMary(3); // Run a command that scores the row of discs
+  setFlywheel(505); // Prepare flywheel to score
+
+  chassis.drive_pid(11,130);
+  chassis.drive_pid(-6,130);
+
+  pros::delay(500);
+
+  hailMary(1);
 }
 
 void Right_Side_Auto_Stack(){
     
     // ----- INITIALIZE AUTONOMOUS ----- //
     motorHold(); // Enable drivetrain locking
-    setFlywheel(580); // Spin Flywheel at 580RM
+    setFlywheel(585); // Spin Flywheel at 580RM
     short resetAngle = -45; // Reset the Inertial Sensor
 
     // ----- PICK UP DISC ----- //
@@ -63,22 +111,22 @@ void Right_Side_Auto_Stack(){
 
     // ----- SCORE DISCS ----- //
     chassis.drive_pid(6,100); // Drive away from roller
-    chassis.turn_pid(-127-resetAngle,100); // Turn away from roller
+    chassis.turn_pid(-129-resetAngle,100); // Turn away from roller
     chassis.drive_pid(13,100); // Drive to a scoring position
 
-    chassis.turn_pid(-72.5-resetAngle,100); // Turn towards the high goal
+    chassis.turn_pid(-73.5-resetAngle,100); // Turn towards the high goal
 	disableAutoIntake(); // Disable 4 disc detection
     hailMary(3,MID_DROPOFF); // Score 3 Discs
 
     // ----- PICK UP DISCS ----- //
-    setFlywheel(530); // Set flywheel to 530RPM
+    setFlywheel(535); // Set flywheel to 530RPM
     chassis.turn_pid(-132-resetAngle,100); // Turn towards the row of three discs
     enableAutoIntake(); // Enable 4 disc detection
 
     chassis.drive_pid(47,90); // Pick up row of discs
 
     // ----- SCORE DISCS ----- //
-    chassis.turn_pid(-47-resetAngle,100); // Turn to High Goal
+    chassis.turn_pid(-48-resetAngle,100); // Turn to High Goal
 	disableAutoIntake(); // Disable 4 disc detection
     hailMary(3,MID_DROPOFF); // Score 3 Discs
 

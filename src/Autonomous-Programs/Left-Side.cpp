@@ -29,10 +29,10 @@ We have two alternative Left-side Support Programs.
 
 -----------------------------------------------------------------------------*/
 
-void Left_Side(){    
+void Left_Side(){
     // ----- INITIALIZE AUTONOMOUS ----- //
     motorHold();
-    setFlywheel(570);
+    setFlywheel(545);
 
     // ----- CLAIM BOTTOM ROLLER ----- //
     quickRoller(-50,0); // Run Roller Claim function
@@ -43,22 +43,29 @@ void Left_Side(){
     chassis.drive_pid(3.5,130,false); // Drive towards autonomous line disc 
     
     chassis.drive_pid(-2,130,false); // Drive away from autonomous line
-    chassis.turn_pid(57,130); // Turn to a scoring position
+    chassis.turn_pid(60,130); // Turn to a scoring position
     disableAutoIntake(); // Disable 4 disc detection
 
     setIntake(0);
     chassis.drive_pid(18,130,false); // Drive towards scoring position
-    chassis.turn_pid(-15,110); // Turn towards goal
+    chassis.turn_pid(-13.5,110); // Turn towards goal
 
-    hailMary(3, MID_DROPOFF); // Score 3 discs
+    // while(distIndex.get()>97){
+    //     setIntake(-45);
+    // }
+    // setIntake(0);
+    // pros::delay(100000000);
+
+    // hailMary(3, MID_DROPOFF); // Score 3 discs
+    hailMary(3,NO_DROPOFF); // Score 3 discs
 
     // ----- PICK UP DISCS ----- //
-    setFlywheel(550); // Set flywheel to 590RPM
-    chassis.turn_pid(45,120); // Turn to 54 degrees
+    setFlywheel(517); // Set flywheel to 590RPM
+    chassis.turn_pid(46,120); // Turn to 54 degrees
     enableAutoIntake(); // Enable 4 disc detection
 
     chassis.set_pid_constants(&chassis.headingPID, 11, 0, 65, 0); // Prevent whiplash from turn
-    chassis.set_drive_pid(32, 100,false); // Drive into discs
+    chassis.set_drive_pid(33, 100,false); // Drive into discs
     chassis.wait_until(7); // wait until robot has driven 8 inches
     
     chassis.set_max_speed(25); // Slow down to collect stack of discs
@@ -66,29 +73,23 @@ void Left_Side(){
     chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0); // Return heading to default state
 
     // ----- SCORE DISCS ----- //
-    chassis.drive_pid(-5, 100,false); // Drive into discs
-
-    chassis.turn_pid(-29,120); // Turn towards goal
+    chassis.turn_pid(-31.5,120); // Turn towards goal
     pros::delay(200); // Wait for disc to settle in robot
     disableAutoIntake(); // Disable four disc detection
 
-    hailMary(3, SMALL_DROPOFF); // Score 3 discs 
+    hailMary(3,NO_DROPOFF); // Score 3 discs
+    setFlywheel(490);
 
-    pros::delay(1000000);
+    setIntake(127);
 
-    // ----- PICK UP DISC ----- // 
-    setFlywheel(546); // Set flywheel target to 556RPM
-    enableAutoIntake(); // Enable 4 disc detection
-    chassis.drive_pid(12,90); // Pick up disc from auto line
+    chassis.drive_pid(10, 100,false);
+    chassis.drive_pid(-5, 100,false);
 
-    chassis.drive_pid(-3,90); // Drive away from auto line
-    pros::delay(1500); // Wait for disc to fully enter robot
-    disableAutoIntake(); // Disable 4 disc detection
+    pros::delay(1000);
 
-    hailMary(2); // Shoot 2 discs ( there should only be one in robot but just in case :] )
-    setFlywheel(900); // Set Flywheel to max speed to allow flywheel to not stop during disablement
+    hailMary(3,NO_DROPOFF); // Score 3 discs
+    // hailMary(3, MID_DROPOFF); // Score 3 discs 
 
-    pros::delay(100000000); // Prevent moving on from autonomous function
 }
 
 void Left_Side_Auto_Stack(){    

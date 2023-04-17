@@ -52,7 +52,11 @@ void printRowCenter(int row, std::string str){
 void extraButtons(){
   if(ctrlerDebugOn){
     if(controller.get_digital(DIGITAL_X)){
-      hailMary(3,BIG_DROPOFF);  
+      hailMary(3,BIG_DROPOFF);
+    }
+
+    if(controller.get_digital(DIGITAL_Y)){
+      hailMarySlow(3);
     }
   }
 }

@@ -37,7 +37,7 @@ void taskFunctions(){
 
 		if(time_elapsed%300==0){ // For every 300ms
 
-			printRowCenter(0,to_string(10));
+			printRowCenter(0,to_string(autoSwitches1.get_value()));
 			// printRowCenter(1,to_string(chassis.odom.getY()));
 			// printRowCenter(2,to_string(chassis.odom.getTheta()));
 
@@ -60,7 +60,8 @@ void taskFunctions(){
 
 		detect_motor_disconnect();
 
-		// float value = intakeMode;
+		// float value = autoSwitches1.get_value();
+		// float value_2 = rollerMtr.get_voltage()/12000;
 
 		// printToGraph(time_elapsed,20,time_elapsed,{value});
 
