@@ -33,7 +33,7 @@ The process of scoring disks is as follows:
 void hailMary(short discs, drop_off dropOff, int time_out){
 
   // Set Flywheel target to max temporarily
-  double indexRPM=getFlywheelTarget()-dropOff+25;
+  double indexRPM=getFlywheelTarget()-dropOff;
   setFlywheel(9000);
 
   // Use slow scoring function with our max accelleration
@@ -75,7 +75,8 @@ void hailMarySlow(short discs, double indexRPM, int time_out){
   short reset_speed = 80;
   setRoller(reset_speed);
 
-  short reset_rotation = 4;
+  // short reset_rotation = 4;
+  short reset_rotation = 100;
 
   if(indexRPM==-1)
     indexRPM=getFlywheelTarget();
@@ -91,15 +92,16 @@ void hailMarySlow(short discs, double indexRPM, int time_out){
   while(distStack.get()<190 && (pros::millis()<endTime || time_out == -1)){
 
     bool last_disc = distStack.get()>150;
+    bool less_than_three = distStack.get()>145;
 
     switch (scoreState)
     {
       case S_WAITING:
-      if(shooterMtr.get_velocity()>indexRPM - last_disc*8);
+      if(shooterMtr.get_velocity()>indexRPM - last_disc*8 + less_than_three*25);
         updateShootSettings(S_OUTWARDS,-90);
       
       break;  case S_OUTWARDS:
-      if(distIndex.get()<97)
+      if(distIndex.get()<95)
         updateShootSettings(S_RESET,127);
 
       break;  case S_RESET:
