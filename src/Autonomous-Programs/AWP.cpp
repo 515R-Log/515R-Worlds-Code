@@ -29,7 +29,7 @@ We have two alternative Solo AWP Programs.
 
 void Awp(){
 
-  setFlywheel(585); // Prepare flywheel to score
+  setFlywheel(650); // Prepare flywheel to score
   disableAutoIntake();
 
   // ----- CLAIM BOTTOM ROLLER ----- //
@@ -38,7 +38,7 @@ void Awp(){
   quickRollerShort(-40,0); // Run Roller Claim function
 
   // ----- SCORE PRELOADS ----- //
-  chassis.drive_pid(6,120,false); // Drive away from roller
+  chassis.drive_pid(7,120,false); // Drive away from roller
   chassis.turn_pid(45,120); // Turn away from roller
   chassis.drive_pid(8.5,120); // Drive to a scoring position
 
@@ -47,36 +47,44 @@ void Awp(){
 
   hailMary(2,NO_DROPOFF); // Score preloads
   
-  setFlywheel(560);
+  setFlywheel(550);
 
   // ----- PICK UP DISCS ----- //
   chassis.turn_pid(45, 120); // Turn towards stack of discs
   enableAutoIntake();
 
   setRoller(127); // Prepare lift to pick of discs
-  chassis.drive_pid(39, 40); // Drive into discs
-  pros::delay(400);
+
+    chassis.set_pid_constants(&chassis.headingPID, 11, 0, 65, 0); // Prevent whiplash from turn
+    chassis.set_drive_pid(39, 100,false); // Drive into discs
+    chassis.wait_until(7); // wait until robot has driven 8 inches
+    
+    chassis.set_max_speed(25); // Slow down to collect stack of discs
+    chassis.wait_drive(); // Wait for robot to complete drive movement
+    chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0); // Return heading to default state
+
+
+  // chassis.drive_pid(39, 40); // Drive into discs
 
   // ----- SCORE DISCS ----- //
   chassis.set_turn_pid(-33,120); // Turn towards goal
-  pros::delay(200);
   disableAutoIntake();
   chassis.wait_drive();
 
   hailMary(3,NO_DROPOFF); // Score discs
 
-  setFlywheel(580);
+  setFlywheel(560);
   setRoller(0);
 
   // ----- PICK UP DISCS ----- //
-  chassis.turn_pid(43, 120); // Turn towards row of discs
+  chassis.turn_pid(45, 120); // Turn towards row of discs
   enableAutoIntake();
 
   // Make the drivetrain settle quicker
   chassis.set_pid_constants(&chassis.headingPID, 11, 0, 65, 0);
   chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 500, 500);
 
-  chassis.drive_pid(78, 80); // Move through discs
+  chassis.drive_pid(81, 70); // Move through discs
   chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
   
   disableAutoIntake();
@@ -92,7 +100,7 @@ void Awp(){
   // ----- SCORE PRELOADS ----- //
   chassis.drive_pid(12,120,false); // Drive away from roller
 
-  chassis.turn_pid(-76.2,120); // Turn towards goal
+  chassis.turn_pid(-77.2,120); // Turn towards goal
   hailMary(3,NO_DROPOFF); // Score row of discs
 
 }

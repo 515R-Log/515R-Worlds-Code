@@ -32,7 +32,7 @@ We have two alternative Left-side Support Programs.
 void Left_Side(){
     // ----- INITIALIZE AUTONOMOUS ----- //
     motorHold();
-    setFlywheel(545);
+    setFlywheel(540);
 
     // ----- CLAIM BOTTOM ROLLER ----- //
     quickRoller(-50,0); // Run Roller Claim function
@@ -46,7 +46,7 @@ void Left_Side(){
     chassis.turn_pid(60,130); // Turn to a scoring position
     disableAutoIntake(); // Disable 4 disc detection
 
-    setIntake(0);
+    setIntake(40);
     chassis.drive_pid(18,130,false); // Drive towards scoring position
     chassis.turn_pid(-13.5,110); // Turn towards goal
 

@@ -54,7 +54,7 @@ void Right_Side(){
 
   // ----- SCORE DISCS ----- //
   chassis.drive_pid(-7.5,130,false); // Drive away from autonomus line
-  chassis.turn_pid(100,90); // Turn towards goal
+  chassis.turn_pid(99,90); // Turn towards goal
   hailMary(3); // Run a command that scores the row of discs
 
   disableAutoIntake();
