@@ -37,7 +37,7 @@ void taskFunctions(){
 
 		if(time_elapsed%300==0){ // For every 300ms
 
-			printRowCenter(0,to_string(autoSwitches1.get_value()));
+			// printRowCenter(0,to_string(autoSwitches1.get_value()));
 			// printRowCenter(1,to_string(chassis.odom.getY()));
 			// printRowCenter(2,to_string(chassis.odom.getTheta()));
 
@@ -133,11 +133,15 @@ void autonomous() {
 
     // ----- WIN POINT ----- //
     case 3:
+		chassis.set_exit_condition(chassis.turn_exit,  30, 3,  500, 7,   500, 500);
       	Awp();
       	break;
 
     // ----- WIN POINT VARIENT ----- //
     case 4:
+	chassis.set_exit_condition(chassis.turn_exit,  30, 3,  500, 7,   500, 500);
+	chassis.set_exit_condition(chassis.drive_exit, 20,  50, 300, 150, 500, 500);
+
       	Awp_Auto_Stack();
       	break;
 
@@ -153,6 +157,8 @@ void autonomous() {
 
     // ----- RIGHT SIDE SUPPORT ----- //
     case 7:
+	chassis.set_exit_condition(chassis.turn_exit,  30, 3,  500, 7,   500, 500);
+
       	Right_Side();
       	break;
 
@@ -187,6 +193,9 @@ void opcontrol() {
 	bool deflectorInit=false; // Determine if the deflector has been initialized
 	short deflectorInitTime=0; // Declare amount of time that has been elapsed in initialization
 
+	setFlywheel(451);
+	pros::delay(1500);
+	hailMaryMatchLoad(10000000);
 
 	while (true) {
 		// ----- Initialize Deflector Pt.2 ----- //

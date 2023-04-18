@@ -13,4 +13,6 @@ void hailMarySlow(short discs, double indexRPM=-1, int time_out=-1);
 
 extern short score_time;
 
+void hailMaryMatchLoad(int time_out);
+
 void hailMaryDrive(int tarShots, int tarSpeed);

@@ -2,6 +2,8 @@
 #include "General/drivetrain.hpp"
 #include "General/intakeLiftRoller.hpp"
 #include "Flywheel-Control/shootDisc.hpp"
+#include "Debug/controller.hpp"
+
 /*-----------------------------------------------------------------------------
   _____  _              _____
  |  __ \(_)            / ____|
@@ -164,7 +166,70 @@ void hailMaryDrive(int tarShots, int tarSpeed){
       return;
     }
 }
-motorCoast();
+// motorCoast();
+
+}
+
+
+PotMgr delay_rotation('H');
+
+// ----------------- HAIL MARY DRIVER ----------------- //
+// Scores 1-3 disks at a given speed
+// Controller input will force-exit function
+// Used Exclusively for the Match Load Station
+void hailMaryMatchLoad(int time_out){
+  delay_rotation.set_max(1000);
+  delay_rotation.set_min(0);
+  delay_rotation.set_direction(false);
+
+  printRowCenter(0,to_string(delay_rotation.get_value()));
+
+  int start_time=pros::millis();
+  int endTime=pros::millis()+time_out;
+  int confidence_time=0;
+
+  scoreState = S_WAITING;
+
+  short reset_speed = 80;
+  setRoller(reset_speed);
+
+  // short reset_rotation = 4;
+  short reset_rotation = delay_rotation.get_value();
+
+  // Turn everything on the drivebase off
+  motorHold();
+  disableAutoIntake();
+
+  // While all discs have NOT been shot and there is still time remaining
+  while(confidence_time<161 && (pros::millis()<endTime || time_out == -1)){
+
+    bool last_disc = distStack.get()>150;
+    bool less_than_three = distStack.get()>145;
+
+    if(distStack.get()>190)
+      confidence_time+=10;
+    else if(confidence_time!=0)
+      confidence_time=0;
+
+    switch (scoreState)
+    {
+      case S_WAITING:
+      if(shooterMtr.get_velocity()>getFlywheelTarget() - last_disc*8 + less_than_three*25);
+        updateShootSettings(S_OUTWARDS,-90);
+      
+      break;  case S_OUTWARDS:
+      if(distIndex.get()<95)
+        updateShootSettings(S_RESET,127);
+
+      break;  case S_RESET:
+      if(start_rotation+reset_rotation<rollerMtr.get_position())
+        updateShootSettings(S_WAITING,reset_speed);
+
+      break;
+    }
+    pros::delay(20);
+  }
+// motorCoast();
 
 }
 

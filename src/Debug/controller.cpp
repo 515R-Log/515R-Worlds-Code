@@ -51,8 +51,10 @@ void printRowCenter(int row, std::string str){
 
 void extraButtons(){
   if(ctrlerDebugOn){
-    if(controller.get_digital(DIGITAL_X)){
-      hailMary(3,BIG_DROPOFF);
+    if(controller.get_digital(DIGITAL_A)){
+      setFlywheel(460);
+      pros::delay(1500);
+      hailMaryMatchLoad(10000000);
     }
 
     if(controller.get_digital(DIGITAL_Y)){
