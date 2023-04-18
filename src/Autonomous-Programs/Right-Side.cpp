@@ -33,7 +33,7 @@ We have two alternative Right-side Support Programs.
 
 void Right_Side(){
   // ----- INITIALIZE AUTONOMOUS ----- //
-  setFlywheel(545); // Prepare flywheel to score
+  setFlywheel(540); // Prepare flywheel to score
 
   // ----- CLAIM TOP ROLLER ----- //
   chassis.drive_pid(-21,130); // Drive towards Roller
@@ -54,30 +54,36 @@ void Right_Side(){
 
   // ----- SCORE DISCS ----- //
   chassis.drive_pid(-7.5,130,false); // Drive away from autonomus line
-  chassis.turn_pid(99,90); // Turn towards goal
+  chassis.turn_pid(98.5); // Turn towards goal
   hailMary(3); // Run a command that scores the row of discs
 
   disableAutoIntake();
   setRoller(0);
 
   // ----- COLLECT DISCS ----- //
-  setFlywheel(530);
+  setFlywheel(525);
   enableAutoIntake();
   chassis.turn_pid(44,110); // Turn towards row of discs
   setRoller(127); // Prepare Intake to pick up discs
 
-  chassis.drive_pid(61,80,false); // Drive into row of discs
+  chassis.drive_pid(61,70,false); // Drive into row of discs
   chassis.drive_pid(-17,130,false); // Drive into row of discs
-  chassis.turn_pid(121.5); // Turn towards goal
+  chassis.turn_pid(120.5); // Turn towards goal
   disableAutoIntake();
 
   hailMary(3); // Run a command that scores the row of discs
-  setFlywheel(505); // Prepare flywheel to score
+  setFlywheel(512); // Prepare flywheel to score
+
+  setIntake(127);
 
   chassis.drive_pid(11,130);
   chassis.drive_pid(-6,130);
 
-  pros::delay(500);
+  chassis.turn_pid(-7); // Turn towards goal
+  chassis.drive_pid(21,130);
+  // chassis.drive_pid(-20,130);
+
+  chassis.turn_pid(127.5); // Turn towards goal
 
   hailMary(1);
 }

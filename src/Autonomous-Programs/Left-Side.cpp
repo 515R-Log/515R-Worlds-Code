@@ -32,7 +32,7 @@ We have two alternative Left-side Support Programs.
 void Left_Side(){
     // ----- INITIALIZE AUTONOMOUS ----- //
     motorHold();
-    setFlywheel(540);
+    setFlywheel(530);
 
     // ----- CLAIM BOTTOM ROLLER ----- //
     quickRoller(-50,0); // Run Roller Claim function
@@ -82,10 +82,18 @@ void Left_Side(){
 
     setIntake(127);
 
-    chassis.drive_pid(10, 100,false);
+    chassis.drive_pid(11, 100,false);
     chassis.drive_pid(-5, 100,false);
 
-    pros::delay(1000);
+    chassis.turn_pid(105);
+    chassis.drive_pid(19, 100,false);
+    chassis.drive_pid(-19, 100,false);
+
+    chassis.turn_pid(-31.5,120); // Turn towards goal
+    hailMary(3,NO_DROPOFF); // Score 3 discs
+
+
+    pros::delay(100000);
 
     hailMary(3,NO_DROPOFF); // Score 3 discs
     // hailMary(3, MID_DROPOFF); // Score 3 discs 

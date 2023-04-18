@@ -1,6 +1,7 @@
 #include "Autonomous-Functions/api.hpp"
 #include "Flywheel-Control/api.hpp"
 #include "General/api.hpp"
+#include "Debug/controller.hpp"
 /*-----------------------------------------------------------------------------
   _____         _                   __          __ _____                        _         
  / ____|       | |                /\\ \        / /|  __ \          /\          | |        
@@ -106,5 +107,11 @@ void Awp(){
 }
 
 void Awp_Auto_Stack(){
+  setFlywheel(0);
+  chassis.drive_pid(20,130);
+  chassis.drive_pid(-20,130);
 
+  // pros::delay(1000);
+  printRowCenter(0,to_string(chassis.left_motors.at(0).get_position()));
+  // setIntake(127);
 }
