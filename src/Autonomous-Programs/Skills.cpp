@@ -1,6 +1,7 @@
 #include "Autonomous-Functions/api.hpp"
 #include "General/api.hpp"
 #include "Flywheel-Control/api.hpp"
+#include "Debug/controller.hpp"
 /*-----------------------------------------------------------------------------
   _____  _     _  _  _                            _         
  / ____|| |   (_)| || |              /\          | |        
@@ -31,42 +32,48 @@ void skillsSection(){
     chassis.odom.setPosition(72,9,89); // Set up robot position`
 
     // ----- PICK UP DISCS ----- //
-    setFlywheel(460); // Set Flywheel Target to 460 RPM
+    setFlywheel(465); // Set Flywheel Target to 460 RPM
 	enableAutoIntake(); // Enable 4 disc detection
 
     // Drive in front of stack of discs
     chassis.add_point(38.9,23.4,90,true);
-    chassis.point_pid(51.0,30.9,60);
+    chassis.point_pid(47.0,30.9,60);
 
-    chassis.drive_to_point(77,50); // Collect stack of discs
+    chassis.set_drive_to_point(77,50); // Collect stack of discs
+    chassis.wait_until(7);
+    chassis.set_max_speed(25);
+    chassis.wait_drive();
 
     // ----- SCORE DISCS ----- //
-    chassis.turn_pid(130); // Turn towards goal
+    chassis.turn_pid(127); // Turn towards goal
     disableAutoIntake(); // Turn off Intake
 
     hailMarySlow(3); // Score discs
 
     // ----- PICK UP DISCS ----- //
-    setFlywheel(475); // Set Flywheel Target to 475 RPM
+    setFlywheel(485); // Set Flywheel Target to 475 RPM
     enableAutoIntake(); // Turn on intake
 
     // Drive through row of discs
-    chassis.add_point(89.7,60,80); // First disc location
-    chassis.add_point(115.6,80.4,70); // Final disc location
+    chassis.add_point(91.7,60,60); // First disc location
+    chassis.add_point(118.6,80.4,50); // Final disc location
     chassis.point_pid(); // Run route
 
     // ----- SCORE DISCS ----- //
-    chassis.turn_pid(174.4); // Turn towards goal
+    chassis.turn_pid(176.4); // Turn towards goal
     disableAutoIntake(); // Turn off intake
 
     hailMarySlow(3); // Score discs
 
     // ----- PICK UP DISCS ----- //
-    setFlywheel(475); // Set Flywheel Target to 475 RPM
-    chassis.turn_pid(5); // Turn towards stack of discs
+    setFlywheel(420); // Set Flywheel Target to 475 RPM
+    // chassis.turn_pid(5); // Turn towards stack of discs
     enableAutoIntake(); // Turn on intake
 
-    chassis.point_pid(120.2,124.6,65); // Drive throught stack of discs
+    chassis.set_point_pid(123.2,122.6,50); // Drive throught stack of discs
+    chassis.wait_until_y(100);
+    chassis.set_max_speed(25);
+    chassis.wait_drive();
 
     // ----- CLAIM TOP ROLLER ----- //
     chassis.turn_pid(180); // Turn towards roller
@@ -86,17 +93,18 @@ void skillsSection(){
     chassis.odom.setTheta(-187.3+chassis.odom.getTheta()); // Reset robot angle
     chassis.odom.setY(11+reset_y.x); // Reset robot Y
 
-    // ----- PICK UP DISC ----- //
-    chassis.turn_pid(-35,130); // Turn towards disc
-    enableAutoIntake(); // Turn on intake
-    chassis.drive_pid(27,130); // Drive through disc
+    chassis.add_point(-14.9+123+2,11.3+23-3,80,false,LOOSE);
+    chassis.add_point(-23.3+123+2,13.8+23-3,80,false,LOOSE);
+    // chassis.add_point(-26.3,26.3,30,true);
+    chassis.set_point_pid();
+    chassis.wait_until_y(8);
+    setIntake(127);
+    chassis.wait_drive();
+    pros::delay(20);
+    chassis.turn_pid(90);
+    setIntake(0);
 
-    // ----- CLAIM RIGHT ROLLER ----- //
-    chassis.turn_pid(87,130); // Turn towards roller
-    disableAutoIntake(); // Turn off Intake
-    setIntake(0); // Ensure Intake is turned off
-
-    skillsRoller(0,-50,450,-40); // Claim roller
+    skillsRoller(-50,0,380,-40); // Claim roller
 
     // ----- RESET ----- //
     chassis.drive_pid(5,100); // Drive away from roller
@@ -109,24 +117,35 @@ void Skills(){
 
     // ----- INITIALIZE AUTONOMOUS ----- //
     motorHold();
-    setFlywheel(420);
- 
-    hailMarySlow(9); // Score match load discs
+
+	setFlywheel(451);
+	pros::delay(1500);
+	hailMaryMatchLoad(10000000);
 
     skillsSection(); // Run steps 2 and 3
 
     // ----- SCORE DISCS ------ //
-    setFlywheel(420); // Set Flywheel Target to 420 RPM
+    setFlywheel(451); // Set Flywheel Target to 420 RPM
 
     // Generate and run (X Y) path to the match load station
     chassis.add_point(38,22);
-    chassis.add_point(64,15); 
-    chassis.point_pid(74,15.5);
+    chassis.add_point(64,15.5); 
+    chassis.point_pid(74,16);
 
     chassis.turn_pid(89-7.3,130); // Turn towards goal
 
-    hailMarySlow(10); // Score match load discs
+	hailMaryMatchLoad(10000000);
 
     skillsSection(); // Run steps 5 and 6
+
+    chassis.point_pid(26.7,82.7,90);
+
+    chassis.turn_pid(-1);
+
+    hailMarySlow(3);
+
+    chassis.point_pid(24.8,34.4,90,true);
+
+    chassis.turn_pid(45);
 
 }

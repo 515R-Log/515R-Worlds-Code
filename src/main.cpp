@@ -37,9 +37,9 @@ void taskFunctions(){
 
 		if(time_elapsed%300==0){ // For every 300ms
 
-			// printRowCenter(0,to_string(autoSwitches1.get_value()));
-			// printRowCenter(1,to_string(chassis.odom.getY()));
-			// printRowCenter(2,to_string(chassis.odom.getTheta()));
+			printRowCenter(0,to_string(chassis.odom.getX()));
+			printRowCenter(1,to_string(chassis.odom.getY()));
+			printRowCenter(2,to_string(chassis.odom.getTheta()));
 
 			// // The following code will be toggleable at the competition
 			// if(ctrlerDebugOn){ // When Controller Debug is enabled
@@ -139,8 +139,9 @@ void autonomous() {
 
     // ----- WIN POINT VARIENT ----- //
     case 4:
-	chassis.set_exit_condition(chassis.turn_exit,  30, 3,  500, 7,   500, 500);
+	// chassis.set_exit_condition(chassis.turn_exit,  0, 3,  500, 7,   500, 500);
 	chassis.set_exit_condition(chassis.drive_exit, 20,  50, 300, 150, 500, 500);
+	chassis.enable_odometry();
 
       	Awp_Auto_Stack();
       	break;
@@ -176,6 +177,8 @@ void autonomous() {
 // Display Odometry details
 void opcontrol() {
 
+	chassis.odom.setPosition(0,0);
+
 	runTasks.resume(); // Enable useful tasks
 
 	initializeDriver(); // Initialize Driver
@@ -185,17 +188,14 @@ void opcontrol() {
 
 	enableCntrlDebug();
 
-	chassis.disable_odometry();
+	// chassis.disable_odometry();
 
+	chassis.enable_odometry();
 
 	// ----- Initialize Defector Pt.1 ----- //
 	setPiston("Deflector",UP); // Send piston upwards 
 	bool deflectorInit=false; // Determine if the deflector has been initialized
 	short deflectorInitTime=0; // Declare amount of time that has been elapsed in initialization
-
-	setFlywheel(451);
-	pros::delay(1500);
-	hailMaryMatchLoad(10000000);
 
 	while (true) {
 		// ----- Initialize Deflector Pt.2 ----- //

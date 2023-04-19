@@ -52,13 +52,13 @@ void printRowCenter(int row, std::string str){
 void extraButtons(){
   if(ctrlerDebugOn){
     if(controller.get_digital(DIGITAL_A)){
-      setFlywheel(460);
-      pros::delay(1500);
-      hailMaryMatchLoad(10000000);
+      point2 reset_y=quickReset(); // Get distance from wall
+      chassis.odom.setY(11+reset_y.x); // Reset robot Y
     }
 
     if(controller.get_digital(DIGITAL_Y)){
-      hailMarySlow(3);
+    point2 reset_x=quickReset(); // Get distance away from wall
+    chassis.odom.setX(2+reset_x.x); // Reset robot X
     }
   }
 }

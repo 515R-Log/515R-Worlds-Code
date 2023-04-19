@@ -206,7 +206,7 @@ void hailMaryMatchLoad(int time_out){
     bool last_disc = distStack.get()>150;
     bool less_than_three = distStack.get()>145;
 
-    if(distStack.get()>190)
+    if(distStack.get()>186)
       confidence_time+=10;
     else if(confidence_time!=0)
       confidence_time=0;

@@ -108,10 +108,19 @@ void Awp(){
 
 void Awp_Auto_Stack(){
   setFlywheel(0);
-  chassis.drive_pid(20,130);
-  chassis.drive_pid(-20,130);
+  pros::delay(2000);
+  skillsRoller(-40,0,100,-40);
+  chassis.add_point(0,8,80,false,LOOSE);
+  chassis.add_point(-14.9,11.3,80,false,LOOSE);
+  chassis.add_point(-23.3,13.8,80,false,LOOSE);
+  // chassis.add_point(-26.3,26.3,30,true);
+  chassis.set_point_pid();
+  chassis.wait_until_y(8);
+  setIntake(127);
+  chassis.wait_drive();
+  pros::delay(20);
+  chassis.turn_pid(90);
+  setIntake(0);
 
-  // pros::delay(1000);
-  printRowCenter(0,to_string(chassis.left_motors.at(0).get_position()));
-  // setIntake(127);
+  skillsRoller(-40,0,400,-50);
 }

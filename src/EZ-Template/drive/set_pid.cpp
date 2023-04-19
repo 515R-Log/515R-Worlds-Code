@@ -214,3 +214,13 @@ void Drive::drive_to_point(double x, double y, double turn_speed, double drive_s
 
     point_pid(target.x,target.y,drive_speed);
 }
+
+void Drive::set_drive_to_point(double x, double y, double turn_speed, double drive_speed){
+    point2 target(x,y);
+    double globalTargetTheta = util::radToDeg(util::calcAngle(chassis.odom.pos,target)); // Determine Basic Target Angle
+    double thetaError = util::wrapAngle(globalTargetTheta-chassis.odom.imu.get_rotation()); // Account for 360 deg -> 0 deg overlap
+
+    turn_pid(chassis.odom.imu.get_rotation()+thetaError,turn_speed);
+
+    set_drive_pid(util::calcHypo(chassis.odom.pos,target),drive_speed);
+}

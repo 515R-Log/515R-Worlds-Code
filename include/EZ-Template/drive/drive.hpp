@@ -567,6 +567,9 @@ class Drive {
 
   void drive_to_point(double x, double y, double turn_speed=100, double drive_speed=100);
 
+  void set_drive_to_point(double x, double y, double turn_speed=100, double drive_speed=100);
+
+
   void update_point_pid_conditions(point_pid_build pnt);
 
   /**
