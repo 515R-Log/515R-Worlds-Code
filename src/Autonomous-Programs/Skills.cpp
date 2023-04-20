@@ -48,7 +48,10 @@ void skillsSection(){
     chassis.wait_drive(); // Wait for robot to finish picking up discs
 
     // ----- SCORE DISCS ----- //
-    chassis.turn_pid(127); // Turn towards goal
+    chassis.set_turn_pid(127); // Turn towards goal
+    pros::delay(100);
+    chassis.wait_drive();
+
     disableAutoIntake(); // Turn off Intake
     hailMarySlow(3); // Score discs
 
@@ -92,7 +95,7 @@ void skillsSection(){
     skillsRoller(-50,0,350,-50); // Claim roller
     
     // ----- RESET ----- //
-    // chassis.drive_pid(5,100); // Drive away from roller
+    chassis.drive_pid(5,100); // Drive away from roller
 
     point2 reset_y=quickReset(); // Get distance from wall
     chassis.odom.setTheta(-187.3+chassis.odom.getTheta()); // Reset robot angle
@@ -144,7 +147,7 @@ void Skills(){
     skillsSection(); // Run steps 2 and 3
 
     // ----- SCORE DISCS ------ //
-    setFlywheel(451); // Set Flywheel Target to 420 RPM
+    setFlywheel(455); // Set Flywheel Target to 420 RPM
 
     // Generate and run (X Y) path to the match load station
     chassis.add_point(38,22); // Out of the way of rollers and walls
