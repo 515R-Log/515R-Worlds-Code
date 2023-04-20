@@ -139,36 +139,36 @@ void waitButJoystick(int time){
   }
 }
 
-// ----------------- HAIL MARY DRIVER ----------------- //
-// Scores 1-3 disks at a given speed
-// Controller input will force-exit function
-// Used Exclusively for the Match Load Station
-void hailMaryDrive(int tarShots, int tarSpeed){
-  // Turn off Drivetrain and Lift
-  motorHold();
-  setLift(0);
+// // ----------------- HAIL MARY DRIVER ----------------- //
+// // Scores 1-3 disks at a given speed
+// // Controller input will force-exit function
+// // Used Exclusively for the Match Load Station
+// void hailMaryDrive(int tarShots, int tarSpeed){
+//   // Turn off Drivetrain and Lift
+//   motorHold();
+//   setLift(0);
 
-  setFlywheel(440);
+//   setFlywheel(440);
 
-  // Loop through each desired shot
-  for(int i=0; i<tarShots; i++){
-    point2 driveJoystics=setDriveJoystics(); // Check controller input
+//   // Loop through each desired shot
+//   for(int i=0; i<tarShots; i++){
+//     point2 driveJoystics=setDriveJoystics(); // Check controller input
 
-    bool lastShot= (i>=tarShots-4);
-    while(shooterMtr.get_velocity()+25-3*lastShot<getFlywheelTarget());
-    setRoller(-127);
-    waitButJoystick(230 + 100*lastShot);
+//     bool lastShot= (i>=tarShots-4);
+//     while(shooterMtr.get_velocity()+25-3*lastShot<getFlywheelTarget());
+//     setRoller(-127);
+//     waitButJoystick(230 + 100*lastShot);
 
-    setRoller(127);
-    waitButJoystick(140);
-    if(fabs(driveJoystics.x)>0 || fabs(driveJoystics.y)>0){
-      motorCoast();
-      return;
-    }
-}
-// motorCoast();
+//     setRoller(127);
+//     waitButJoystick(140);
+//     if(fabs(driveJoystics.x)>0 || fabs(driveJoystics.y)>0){
+//       motorCoast();
+//       return;
+//     }
+// }
+// // motorCoast();
 
-}
+// }
 
 
 PotMgr delay_rotation('H');
@@ -182,7 +182,7 @@ void hailMaryMatchLoad(int time_out){
   delay_rotation.set_min(0);
   delay_rotation.set_direction(false);
 
-  printRowCenter(0,to_string(delay_rotation.get_value()));
+  // printRowCenter(0,to_string(delay_rotation.get_value()));
 
   int start_time=pros::millis();
   int endTime=pros::millis()+time_out;
@@ -233,6 +233,78 @@ void hailMaryMatchLoad(int time_out){
 
 }
 
+
+// ----------------- HAIL MARY DRIVER ----------------- //
+// Scores 1-3 disks at a given speed
+// Controller input will force-exit function
+// Used Exclusively for the Match Load Station
+void hailMaryDrive(int tarShots, int tarSpeed){
+  int time_out = 100000000;
+  delay_rotation.set_max(1000);
+  delay_rotation.set_min(0);
+  delay_rotation.set_direction(false);
+
+  // printRowCenter(0,to_string(delay_rotation.get_value()));
+
+  int start_time=pros::millis();
+  int endTime=pros::millis()+time_out;
+  int confidence_time=0;
+
+  scoreState = S_WAITING;
+
+  short reset_speed = 80;
+  setRoller(reset_speed);
+
+  // short reset_rotation = 4;
+  short reset_rotation = delay_rotation.get_value();
+
+  // Turn everything on the drivebase off
+  motorHold();
+  disableAutoIntake();
+
+  // While all discs have NOT been shot and there is still time remaining
+  while(confidence_time<161 && (pros::millis()<endTime || time_out == -1)){
+
+    point2 driveJoystics=setDriveJoystics(); // Check controller input
+
+    bool last_disc = distStack.get()>150;
+    bool less_than_three = distStack.get()>145;
+
+    if(distStack.get()>186)
+      confidence_time+=10;
+    else if(confidence_time!=0)
+      confidence_time=0;
+
+    switch (scoreState)
+    {
+      case S_WAITING:
+      if(shooterMtr.get_velocity()>getFlywheelTarget() - last_disc*8 + less_than_three*25);
+        updateShootSettings(S_OUTWARDS,-90);
+      
+      break;  case S_OUTWARDS:
+      if(distIndex.get()<95){
+        updateShootSettings(S_RESET,127);
+        setFlywheel(452);
+      }
+
+      break;  case S_RESET:
+      if(start_rotation+reset_rotation<rollerMtr.get_position())
+        updateShootSettings(S_WAITING,reset_speed);
+
+      break;
+    }
+
+    if(fabs(driveJoystics.x)>0 || fabs(driveJoystics.y)>0){
+      motorCoast();
+      return;
+    }
+    
+    pros::delay(20);
+  }
+
+  motorCoast();
+
+}
 
 // // ----------------- HAIL MARY ----------------- //
 // // Scores a given number of discs

@@ -23,7 +23,6 @@ void Odometry::iterate(){
   // Grab sensor values and convert to units inches and degrees
   tracking new_rotation(fwd.get()*3.14159265359*wheelDiam.fwd/360, back.get()*3.14159265359*wheelDiam.back/360, getTheta());
   update(new_rotation); // Update odometry with these values
-  std::cout << "ENABLED" << endl;
 }
 
 // ----------- UPDATE ODOMETRY ----------- //

@@ -37,9 +37,9 @@ void taskFunctions(){
 
 		if(time_elapsed%300==0){ // For every 300ms
 
-			printRowCenter(0,to_string(chassis.odom.getX()));
-			printRowCenter(1,to_string(chassis.odom.getY()));
-			printRowCenter(2,to_string(chassis.odom.getTheta()));
+			// printRowCenter(0,to_string(chassis.odom.getX()));
+			// printRowCenter(1,to_string(chassis.odom.getY()));
+			// printRowCenter(2,to_string(chassis.odom.getTheta()));
 
 			// // The following code will be toggleable at the competition
 			// if(ctrlerDebugOn){ // When Controller Debug is enabled
@@ -123,6 +123,8 @@ void autonomous() {
     // ------ SKILLS AUTONOMOUS ----- //
     case 1:
 		chassis.enable_odometry();
+		// chassis.set_exit_condition(chassis.turn_exit,  0, 3,  500, 7,   500, 500);
+		// chassis.set_exit_condition(chassis.drive_exit, 20,  50, 300, 150, 500, 500);
     	Skills();
       	break;
 
@@ -188,14 +190,28 @@ void opcontrol() {
 
 	enableCntrlDebug();
 
-	// chassis.disable_odometry();
+	chassis.disable_odometry();
 
-	chassis.enable_odometry();
+	// chassis.enable_odometry();
 
 	// ----- Initialize Defector Pt.1 ----- //
 	setPiston("Deflector",UP); // Send piston upwards 
 	bool deflectorInit=false; // Determine if the deflector has been initialized
 	short deflectorInitTime=0; // Declare amount of time that has been elapsed in initialization
+
+	pros::delay(100);
+
+	// Used at the match load station to autonomously shoot 10 discs
+  	if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+		short start_time = pros::millis();
+		setFlywheel(425); // Start spinnign flywheel to match load
+		// printRowCenter(0,"HERE");
+		pros::delay(1500); // Wait for flywheel to spin up
+    	hailMaryDrive(9,100);
+		short end_time = pros::millis()-start_time;
+
+		printRowCenter(0,to_string(end_time));
+  	}
 
 	while (true) {
 		// ----- Initialize Deflector Pt.2 ----- //

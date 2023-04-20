@@ -17,41 +17,43 @@ Only used in the Skills Portion of Competition
 
 60 Second Autonomous Program    -    294 Anticipated Point Total
 
- Rollers - 4
- Discs - 34
- Tiles - 28
+Rollers - 4
+Discs - 34
+Tiles - 28
 
- Score - 294
+Score - 294
 
 -----------------------------------------------------------------------------*/
 
 // Steps 2-3 and 5-6
 void skillsSection(){
 
-    // ----- INITIALIZE ----- //
+    // ----- SETUP ----- //
     chassis.odom.setPosition(72,9,89); // Set up robot position`
 
     // ----- PICK UP DISCS ----- //
     setFlywheel(465); // Set Flywheel Target to 460 RPM
-	enableAutoIntake(); // Enable 4 disc detection
+    setIntake(0); // Turn Intake off
 
     // Drive in front of stack of discs
     chassis.add_point(38.9,23.4,90,true);
     chassis.point_pid(47.0,30.9,60);
+    chassis.set_drive_to_point(77,50,100); // Turn to stack and begin driving forwards
+    
+    chassis.wait_until(6); // Wait until the robot is just in front of the stack
+    chassis.set_max_speed(20); // Slow down drivetrain for better collection
 
-    chassis.set_drive_to_point(77,50); // Collect stack of discs
-    chassis.wait_until(7);
-    chassis.set_max_speed(25);
-    chassis.wait_drive();
+	enableAutoIntake(); // Enable 4 disc detection
+    setIntake(127);
+    chassis.wait_drive(); // Wait for robot to finish picking up discs
 
     // ----- SCORE DISCS ----- //
     chassis.turn_pid(127); // Turn towards goal
     disableAutoIntake(); // Turn off Intake
-
     hailMarySlow(3); // Score discs
 
     // ----- PICK UP DISCS ----- //
-    setFlywheel(485); // Set Flywheel Target to 475 RPM
+    setFlywheel(480); // Set Flywheel Target to 487 RPM
     enableAutoIntake(); // Turn on intake
 
     // Drive through row of discs
@@ -66,48 +68,56 @@ void skillsSection(){
     hailMarySlow(3); // Score discs
 
     // ----- PICK UP DISCS ----- //
-    setFlywheel(420); // Set Flywheel Target to 475 RPM
-    // chassis.turn_pid(5); // Turn towards stack of discs
+    setFlywheel(440); // Set Flywheel Target to 475 RPM
+    setIntake(0);
+
+    chassis.set_point_pid(123.2,122.6,100); // Drive through stack of discs
+    chassis.wait_until_y(97); // Wait until right in front of the stack
+    chassis.set_max_speed(20); // Slow down drivetrain
+
+    // chassis.wait_until_y(99); // Wait until right in front of the stack
     enableAutoIntake(); // Turn on intake
 
-    chassis.set_point_pid(123.2,122.6,50); // Drive throught stack of discs
-    chassis.wait_until_y(100);
-    chassis.set_max_speed(25);
-    chassis.wait_drive();
+    chassis.wait_drive(); // Wait for path to complete
 
-    // ----- CLAIM TOP ROLLER ----- //
+    // ----- CLAIM TOP/BOTTOM ROLLER ----- //
     chassis.turn_pid(180); // Turn towards roller
     disableAutoIntake(); // Turn off intake
+    setRoller(-127); // Begin shooting a disc
 
-    // Score one disc
-    setRoller(-127);
-    pros::delay(200);
-    setRoller(0);
+    if(distStack.get()<120)
+        pros::delay(200); // Wait for disc to fire
+    setRoller(0); // Stop indexer
 
     skillsRoller(-50,0,350,-50); // Claim roller
     
     // ----- RESET ----- //
-    chassis.drive_pid(5,100); // Drive away from roller
+    // chassis.drive_pid(5,100); // Drive away from roller
 
     point2 reset_y=quickReset(); // Get distance from wall
     chassis.odom.setTheta(-187.3+chassis.odom.getTheta()); // Reset robot angle
     chassis.odom.setY(11+reset_y.x); // Reset robot Y
 
-    chassis.add_point(-14.9+123+2,11.3+23-3,80,false,LOOSE);
-    chassis.add_point(-23.3+123+2,13.8+23-3,80,false,LOOSE);
-    // chassis.add_point(-26.3,26.3,30,true);
-    chassis.set_point_pid();
-    chassis.wait_until_y(8);
-    setIntake(127);
-    chassis.wait_drive();
-    pros::delay(20);
-    chassis.turn_pid(90);
-    setIntake(0);
+    // ----- PICK UP DISC ----- //
+    // Drive through disc and towards right roller
+    chassis.add_point(125,28,80,false,LOOSE); // Disc Location
+    chassis.add_point(110.1,31.3,80,false,LOOSE); // Disc Location
+    chassis.add_point(102.5,33.8,80,false,LOOSE); // Roller Location
+    chassis.set_point_pid(); // Run path
+    
+    chassis.wait_until_y(30); // Wait until the robot is sufficiently away frommer
+    setIntake(127); // Turn on intake
+    chassis.wait_drive(); // Wait for path to complete
+    
+    // ----- CLAIM RIGHT/LEFT ROLLER ----- //
+    pros::delay(20); // Wait for robot to update settle params
+    chassis.turn_pid(90); // Turn towards roller
+    setIntake(0); // Turn off intake
 
-    skillsRoller(-50,0,380,-40); // Claim roller
+    skillsRoller(-50,0,450,-40); // Claim roller
 
     // ----- RESET ----- //
-    chassis.drive_pid(5,100); // Drive away from roller
+    // chassis.drive_pid(5,100); // Drive away from roller
     point2 reset_x=quickReset(); // Get distance away from wall
     chassis.odom.setX(2+reset_x.x); // Reset robot X
 }
@@ -115,37 +125,64 @@ void skillsSection(){
 // Main Program
 void Skills(){
 
+    float end_time = 60-pros::millis()/1000.0; // Find out the time in which the program ends
+
     // ----- INITIALIZE AUTONOMOUS ----- //
-    motorHold();
+    motorHold(); // Lock drivetrain, when braking
+	setFlywheel(451); // Start spinnign flywheel to match load
+	pros::delay(1500); // Wait for flywheel to spin up
 
-	setFlywheel(451);
-	pros::delay(1500);
-	hailMaryMatchLoad(10000000);
+    short start_time = pros::millis();
 
+    // ----- SCORE DISCS ----- //
+	hailMaryMatchLoad(10000000); // Match load discs until the tray is empty.
+
+    printRowCenter(0,to_string(pros::millis()-start_time));
+
+
+    // ----- COLLECT/SCORE DISCS ----- //
     skillsSection(); // Run steps 2 and 3
 
     // ----- SCORE DISCS ------ //
     setFlywheel(451); // Set Flywheel Target to 420 RPM
 
     // Generate and run (X Y) path to the match load station
-    chassis.add_point(38,22);
-    chassis.add_point(64,15.5); 
-    chassis.point_pid(74,16);
+    chassis.add_point(38,22); // Out of the way of rollers and walls
+    chassis.add_point(64,16.5); // First contact with wall
+    chassis.point_pid(74,16); // Resulting Location
 
-    chassis.turn_pid(89-7.3,130); // Turn towards goal
+    chassis.turn_pid(89-7.3-2+0.7,130); // Turn towards goal
 
 	hailMaryMatchLoad(10000000);
 
     skillsSection(); // Run steps 5 and 6
 
-    chassis.point_pid(26.7,82.7,90);
+    // ----- SCORE DISCS ----- //
+    // If there at least 7 seconds left of the run
+    // if(pros::millis()/1000.0 < end_time-7){
+        setFlywheel(470); // Set the flywheel to shoot close to the goal
+        chassis.add_point(27,35,90); // Drive close to the goal
+        chassis.point_pid(26.7,70,90); // Drive close to the goal
+        
+        chassis.turn_pid(-3); // Turn towards goal
 
-    chassis.turn_pid(-1);
+        // setR
 
-    hailMarySlow(3);
+        hailMarySlow(3); // Score discs
 
-    chassis.point_pid(24.8,34.4,90,true);
 
-    chassis.turn_pid(45);
+    // }
 
+    // // If there at least 4 Seconds left of the run
+    // else if(pros::millis()/1000.0 < end_time-4){
+    //     setFlywheel(600); // Set the flywheel to shoot far from the goal
+    //     chassis.turn_pid(-3); // Turn towards 
+    //     setIntake(-127);
+
+    //     pros::delay(1500);
+    // }
+
+    // ----- DEPLOY ENDGAME ----- //
+    chassis.point_pid(24.8,34.4,127,true); // Drive to corner of the field
+    chassis.turn_pid(45); // Turn to the opposite corner of the field
 }
