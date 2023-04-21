@@ -23,8 +23,6 @@ Main is the most important program because it expands to all others.
 PotMgr autoSwitches1('H'); // Initialize Autonomous Selection Potentiometer
 pros::ADIAnalogIn clogf_sensor ('E');
 
-// pros::ADIAnalogIn('E');
-
 // ---------------- TASK ---------------- //
 // Iterates all functions that are designed to run in the background
 // Does not include the task of EZ-Template, to prevent unforseen merging issues
@@ -37,33 +35,22 @@ void taskFunctions(){
 
 		if(time_elapsed%300==0){ // For every 300ms
 
-			// printRowCenter(0,to_string(chassis.odom.getX()));
-			// printRowCenter(1,to_string(chassis.odom.getY()));
-			// printRowCenter(2,to_string(chassis.odom.getTheta()));
+			// The following code will be toggleable at the competition
+			if(ctrlerDebugOn){ // When Controller Debug is enabled
 
-			// // The following code will be toggleable at the competition
-			// if(ctrlerDebugOn){ // When Controller Debug is enabled
-
-				// // Print the currently-selected autonomous program to the controller
-				// int automas = std::floor(autoSwitches1.get_value()); // Get index of current autonomous option
-				// autoTitles currentMode = static_cast<autoTitles>(automas); // Store autonomous option with 'AutoTitles' data type
-				// printRow(1,stringify(currentMode)); // Print out the name of the autonomous 
-			// }
+				// Print the currently-selected autonomous program to the controller
+				int automas = std::floor(autoSwitches1.get_value()); // Get index of current autonomous option
+				autoTitles currentMode = static_cast<autoTitles>(automas); // Store autonomous option with 'AutoTitles' data type
+				printRow(1,stringify(currentMode)); // Print out the name of the autonomous 
+			}
 			
 		}
-
-		// brainPosAyncIterate();
 
 		liftAsyncIterate();
 
 		setShooterAsyncIterate(); // Flywheel Feed-Forward and PID 
 
 		detect_motor_disconnect();
-
-		// float value = autoSwitches1.get_value();
-		// float value_2 = rollerMtr.get_voltage()/12000;
-
-		// printToGraph(time_elapsed,20,time_elapsed,{value});
 
 		// Wait 20ms for sensor values to update
 		time_elapsed+=20;
@@ -83,10 +70,6 @@ void initialize() {
 	autoSwitches1.set_max(8.9);
 	autoSwitches1.set_min(1);
 	autoSwitches1.set_direction(false);
-
-//   autoSwitches1.set_max(100);
-// 	autoSwitches1.set_min(-50);
-// 	autoSwitches1.set_direction(false);
 
 	initializeGeneral(); // Callibrate Sensors
 }
@@ -179,39 +162,26 @@ void autonomous() {
 // Display Odometry details
 void opcontrol() {
 
-	chassis.odom.setPosition(0,0);
-
 	runTasks.resume(); // Enable useful tasks
 
 	initializeDriver(); // Initialize Driver
-
-	disableAutoIntake(); // Disable Auto Intake
-	// enableAutoIntake();
-
-	enableCntrlDebug();
-
-	chassis.disable_odometry();
-
-	// chassis.enable_odometry();
 
 	// ----- Initialize Defector Pt.1 ----- //
 	setPiston("Deflector",UP); // Send piston upwards 
 	bool deflectorInit=false; // Determine if the deflector has been initialized
 	short deflectorInitTime=0; // Declare amount of time that has been elapsed in initialization
 
-	pros::delay(100);
-
-	// Used at the match load station to autonomously shoot 10 discs
-  	if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-		short start_time = pros::millis();
-		setFlywheel(425); // Start spinnign flywheel to match load
-		// printRowCenter(0,"HERE");
-		pros::delay(1500); // Wait for flywheel to spin up
-    	hailMaryDrive(9,100);
-		short end_time = pros::millis()-start_time;
-
-		printRowCenter(0,to_string(end_time));
-  	}
+	// ----- DEBUG COMMANDS (uncomment to use) ----- //
+	// enableCntrlDebug();
+	// chassis.disable_odometry();
+	// chassis.odom.setPosition(0,0); 
+	// --------------------------------------------- //
+	
+	// ----- SKILLS DRIVER (uncomment to use) ---- //
+	// setFlywheel(425); // Start spinnign flywheel to match load
+	// pros::delay(1500); // Wait for flywheel to spin up
+	// hailMaryDrive(9,100); // Begin match loading
+	// ------------------------------------------- // 
 
 	while (true) {
 		// ----- Initialize Deflector Pt.2 ----- //
@@ -236,7 +206,7 @@ void opcontrol() {
 		// ----- Piston ----- // 
 		setPiston();
 
-		extraButtons(); // Make sure to comment out after testing complete
+		extraButtons(); // Run some testing buttons if the debug is enabled
 
 		pros::delay(10); // Wait 10ms for sensors to update
 	}

@@ -45,6 +45,8 @@ pros::Distance distIntake (1);
 pros::Distance distWallLeft (12);
 pros::Distance distWallRight (8);
 
+pros::Optical opticalRoller(17);
+
 // ---------------- POTENTIOMETER ---------------- //
 // PotMgr autoSwitch('H',true,8.9,1);
 

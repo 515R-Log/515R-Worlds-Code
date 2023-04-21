@@ -91,7 +91,7 @@ void hailMarySlow(short discs, double indexRPM, int time_out){
   int endTime=pros::millis()+time_out;
 
   // While all discs have NOT been shot and there is still time remaining
-  while(distStack.get()<190 && (pros::millis()<endTime || time_out == -1)){
+  while(distStack.get()<180 && (pros::millis()<endTime || time_out == -1)){
 
     bool last_disc = distStack.get()>150;
     bool less_than_three = distStack.get()>145;
@@ -206,7 +206,7 @@ void hailMaryMatchLoad(int time_out){
     bool last_disc = distStack.get()>150;
     bool less_than_three = distStack.get()>145;
 
-    if(distStack.get()>186)
+    if(distStack.get()>175)
       confidence_time+=10;
     else if(confidence_time!=0)
       confidence_time=0;
@@ -270,7 +270,7 @@ void hailMaryDrive(int tarShots, int tarSpeed){
     bool last_disc = distStack.get()>150;
     bool less_than_three = distStack.get()>145;
 
-    if(distStack.get()>186)
+    if(distStack.get()>180)
       confidence_time+=10;
     else if(confidence_time!=0)
       confidence_time=0;

@@ -17,6 +17,8 @@ extern pros::Distance distIntake;
 extern pros::Distance distWallLeft;
 extern pros::Distance distWallRight;
 
+extern pros::Optical opticalRoller;
+
 extern PotMgr autoSwitch;
 
 extern pros::Optical leftRollerColor;

@@ -52,8 +52,7 @@ void printRowCenter(int row, std::string str){
 void extraButtons(){
   if(ctrlerDebugOn){
     if(controller.get_digital(DIGITAL_A)){
-      point2 reset_y=quickReset(); // Get distance from wall
-      chassis.odom.setY(11+reset_y.x); // Reset robot Y
+      skillsRoller(-50,0,400,-50);
     }
 
     if(controller.get_digital(DIGITAL_Y)){

@@ -46,6 +46,8 @@ void Awp(){
   disableAutoIntake();
   chassis.turn_pid(-13,120); // Turn towards the goal
 
+  pros::delay(500);
+
   hailMary(2,NO_DROPOFF); // Score preloads
   
   setFlywheel(550);
@@ -57,10 +59,10 @@ void Awp(){
   setRoller(127); // Prepare lift to pick of discs
 
     chassis.set_pid_constants(&chassis.headingPID, 11, 0, 65, 0); // Prevent whiplash from turn
-    chassis.set_drive_pid(39, 100,false); // Drive into discs
-    chassis.wait_until(7); // wait until robot has driven 8 inches
+    chassis.set_drive_pid(39, 140); // Drive into discs
+    chassis.wait_until(6); // wait until robot has driven 8 inches
     
-    chassis.set_max_speed(25); // Slow down to collect stack of discs
+    chassis.set_max_speed(15); // Slow down to collect stack of discs
     chassis.wait_drive(); // Wait for robot to complete drive movement
     chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0); // Return heading to default state
 

@@ -2,7 +2,6 @@
 #include "General/general.hpp"
 #include "General/intakeLiftRoller.hpp"
 #include "General/piston.hpp"
-// #include "Debug/computer.hpp"
 #include "pros/misc.hpp"
 
 /*-----------------------------------------------------------------------------
@@ -141,6 +140,9 @@ void setShooterTarget(){
 
     };
 
+    if(distIndex.get()<90)
+      setFlywheel(10000);
+
 }
 
 // --------------- SET DELIVERY MOTOR --------------- //
@@ -183,5 +185,4 @@ void setShooterAsyncIterate(){
   //If this is the first go-around
   if(firstPass)
     firstPass=false; // Declare that the first run-through of flywheel is now done
-
 }

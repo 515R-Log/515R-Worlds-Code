@@ -1,6 +1,5 @@
 #include "General/intakeLiftRoller.hpp"
 #include "pros/misc.h"
-
 #include "debug/controller.hpp"
 
 /*-----------------------------------------------------------------------------
@@ -66,6 +65,85 @@ void setRollerMotor(){
   setRoller(power);
 }
 
+// ---------------- ANTI-FOUR STACK ---------------- //
+// Prevents robot from holding four discs for longer than 1.5 seconds
+// If the robot contains a fourth disc. It immediately shoots a disc out of the robot
+// Runs during autonomous control and is usually disabled when scoring
+
+// enum iMode {I_NEUTRAL=0, I_THREE=1, I_REMOVE_2LEFT=2, I_REMOVE_3LEFT=3, I_DISABLE=4};
+iMode intakeMode = I_DISABLE; // Set the default mode of anti-four stack to disabled
+
+int intakeTime=0; // Declare the confidence time of a three stack
+
+// ----- SETUP ----- //
+const short fourStackDistMax = 220; // Four Stack Distance Threshold (Ranges from 230mm to 243mm)
+const short threeStackDistMax = 242; // Three Stack Distance Threshold (Ranges from 247mm to 260mm)
+const short distIntakeThsh = 94; // Intake Disc Detection ( Distance under 95mm means disc found )
+
+
+// Iterate the anti-four stack function
+void antiFourAsyncIterate(){
+  // If the anti-four stack is not disabled
+  if(intakeMode!=I_DISABLE){
+
+    // ---------- CHECK THREE DISCS ----------- //
+    // If there were not three discs in the flyhweel tray 20ms ago
+    switch (intakeMode){
+      case I_NEUTRAL:
+      // Detect three discs in the flywheel tray
+      if(distStackBack.get()<threeStackDistMax)
+        intakeTime+=20; // Add to the confidence timer 
+      
+      // If there are not three discs in the flywheel tray
+      else
+        intakeTime=0; // Reset the timer
+
+      // If there have been discs in the flywheel tray for 150ms
+      if(intakeTime>120)
+        intakeMode=I_THREE; // Confidently say there are three discs in the tray 
+
+      // ---------- DETECT FOURTH DISC ----------- //
+      // Are there 3 discs in the robot? If so...
+      break;  case I_THREE:
+    
+      // If a new disc is found in the intake,
+      if(distIntake.get()<distIntakeThsh)
+
+        // Remove one from the tray and pick this new one up
+        intakeMode=I_REMOVE_2LEFT;
+      
+      // If a fourth disc is found in the robot,
+      else if(distStackBack.get()<fourStackDistMax-2)
+
+        // Remove one disc from the robot.
+        intakeMode=I_REMOVE_3LEFT;
+      
+      break;
+    }
+
+    // ---------- REMOVE FOURTH DISC ----------- //
+    // If the robot wants to remove a disc
+    if(intakeMode==I_REMOVE_2LEFT || intakeMode==I_REMOVE_3LEFT){
+      setIntake(-127); // Remove a disc
+    }
+
+    // ---------- WAIT FOR THREE REMAIN ----------- //
+    // If we want 2 discs left and the distance sensor verifies there are 0-2,
+    if( (intakeMode==I_REMOVE_2LEFT && (distStackBack.get()>253)) 
+        || // OR, if we want 3 discs left and the distance sensor verifies there are 0-3, 
+        (intakeMode==I_REMOVE_3LEFT && (distIndex.get()<95)) ){
+
+      // Reset disc-checking variables
+      intakeMode=I_NEUTRAL;
+      intakeTime=0;
+    }
+  }
+
+  // If the task is disabled and the time is not reset
+  else if (intakeTime!=0)
+    intakeTime=0; // Reset the time
+}
+
 // ---------------- ANTI-JAM LIFT ---------------- //
 // Prevent Jamming by reviewing intake velocity
 // If the velocity is 0, then the intake is jammed
@@ -73,8 +151,8 @@ void setRollerMotor(){
 
 // Define different modes of lifting task
 enum lMode {L_DISABLE=0, L_INIT=1, L_NEUTRAL=2, L_DETECT=3, L_REMOVE=4, L_RESET=5};
-enum lDetect {L_DETECT_TOP=400, L_DETECT_BOTTOM=200};
-enum lRemove {L_REMOVE_TOP=300, L_REMOVE_BOTTOM=100};
+enum lDetect {L_DETECT_TOP=400, L_DETECT_BOTTOM=100};
+enum lRemove {L_REMOVE_TOP=400, L_REMOVE_BOTTOM=300};
 
 lMode liftMode = L_DISABLE; // Set the default mode as disabled
 lDetect lift_detect = L_DETECT_TOP;
@@ -90,7 +168,7 @@ void updateLiftMode(lMode newMode){
 // Function runs once for each iteration of the task it runs in
 void antiJamAsyncIterate(){
   // If this aync function has been enabled
-  if(liftMode!=L_DISABLE){
+  if(liftMode!=L_DISABLE && (intakeMode!=I_REMOVE_2LEFT || intakeMode!=I_REMOVE_3LEFT)){
 
     bool detected = clog_sensor.get_value()<2300 || rollerMtr.is_over_current();
 
@@ -128,10 +206,7 @@ void antiJamAsyncIterate(){
       break; case L_REMOVE:
       setLift(-127); // Spin in reverse
 
-      if(lift_detect==L_DETECT_BOTTOM && rollerMtr.is_over_current() && liftTime>=20)
-        liftTime-=20;
-
-      else if(liftTime>lift_removal_time)
+      if(liftTime>lift_removal_time)
         updateLiftMode(L_RESET); // Start intake up again
 
       // ----- RESTART INTAKE -- 400ms until Complete -- //
@@ -143,98 +218,25 @@ void antiJamAsyncIterate(){
   }
 
   // If the function is disabled an the timer is not reset
-  else if(liftTime!=0)
-    liftTime=0; // Reset the timer
-}
-
-// ---------------- ANTI-FOUR STACK ---------------- //
-// Prevents robot from holding four discs for longer than 1.5 seconds
-// If the robot contains a fourth disc. It immediately shoots a disc out of the robot
-// Runs during autonomous control and is usually disabled when scoring
-
-// enum iMode {I_NEUTRAL=0, I_THREE=1, I_REMOVE_2LEFT=2, I_REMOVE_3LEFT=3, I_DISABLE=4};
-iMode intakeMode = I_DISABLE; // Set the default mode of anti-four stack to disabled
-
-int intakeTime=0; // Declare the confidence time of a three stack
-
-// ----- SETUP ----- //
-const short fourStackDistMax = 230; // Four Stack Distance Threshold (Ranges from 230mm to 243mm)
-const short threeStackDistMax = 255; // Three Stack Distance Threshold (Ranges from 247mm to 260mm)
-const short distIntakeThsh = 94; // Intake Disc Detection ( Distance under 95mm means disc found )
-
-
-// Iterate the anti-four stack function
-void antiFourAsyncIterate(){
-  // If the anti-four stack is not disabled
-  if(intakeMode!=I_DISABLE){
-
-    // ---------- CHECK THREE DISCS ----------- //
-    // If there were not three discs in the flyhweel tray 20ms ago
-    switch (intakeMode){
-      case I_NEUTRAL:
-      // Detect three discs in the flywheel tray
-      if(distStackBack.get()<threeStackDistMax)
-        intakeTime+=20; // Add to the confidence timer 
-      
-      // If there are not three discs in the flywheel tray
-      else
-        intakeTime=0; // Reset the timer
-
-      // If there have been discs in the flywheel tray for 150ms
-      if(intakeTime>150)
-        intakeMode=I_THREE; // Confidently say there are three discs in the tray 
-
-      // ---------- DETECT FOURTH DISC ----------- //
-      // Are there 3 discs in the robot? If so...
-      break;  case I_THREE:
-    
-      // If a new disc is found in the intake,
-      if(distIntake.get()<distIntakeThsh)
-
-        // Remove one from the tray and pick this new one up
-        intakeMode=I_REMOVE_2LEFT;
-      
-      // If a fourth disc is found in the robot,
-      else if(distStackBack.get()<fourStackDistMax-2)
-
-        // Remove one disc from the robot.
-        intakeMode=I_REMOVE_3LEFT;
-      
-      break;
-    }
-
-    // ---------- REMOVE FOURTH DISC ----------- //
-    // If the robot wants to remove a disc
-    if(intakeMode==I_REMOVE_2LEFT || intakeMode==I_REMOVE_3LEFT){
-      setIntake(-127); // Remove a disc
-    }
-
-    // ---------- WAIT FOR THREE REMAIN ----------- //
-    // If we want 2 discs left and the distance sensor verifies there are 0-2,
-    if( (intakeMode==I_REMOVE_2LEFT && (distStackBack.get()>threeStackDistMax-10 || distStackBack.get()<(200-2))) 
-        || // OR, if we want 3 discs left and the distance sensor verifies there are 0-3, 
-        (intakeMode==I_REMOVE_3LEFT && (distStackBack.get()>fourStackDistMax || distStackBack.get()<(200-2))) ){
-
-      // Reset disc-checking variables
-      intakeMode=I_NEUTRAL;
-      intakeTime=0;
-    }
-  }
-
-  // If the task is disabled and the time is not reset
-  else if (intakeTime!=0)
-    intakeTime=0; // Reset the time
+  else if(liftTime!=0 || liftMode!=L_DISABLE)
+    updateLiftMode(L_DISABLE);
 }
 
 // ---------------- INTAKE/LIFT ASYNC TASK ---------------- //
 // Main hub for function tasks of four-stack-detection and anti-jamming
 // Sets a default speed of forwards
+
+int time_elapsed=0;
+
 void liftAsyncIterate(){
   if(liftMode!=L_DISABLE || intakeMode!=I_DISABLE){
     setLift(127); // Set Intake to Spin Forwards
     antiFourAsyncIterate(); // Detect 4 Discs in Robot
     antiJamAsyncIterate(); // Detect Jamming in Robot
   }
+  time_elapsed+=20;
+  if(time_elapsed%100==0)
+    printRowCenter(0,std::to_string(intakeMode));
 }
 
 // Enable lift tasks

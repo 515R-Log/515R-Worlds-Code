@@ -60,8 +60,46 @@ void quickRollerShort(int leftSpeed, int rightSpeed, int rollerTime){
 // Skills Roller Code
 // Condenses otherwise repetitive code with 1 line function call
 void skillsRoller(int leftSpeed, int rightSpeed, int startTime, int startSpeed){
-  quickRoller(leftSpeed,rightSpeed,startTime, startSpeed);
-  quickRollerShort(leftSpeed,rightSpeed,200);
+  chassis.set_mode(DISABLE);
+
+  setDrive(startSpeed);
+
+  pros::delay(startTime);
+
+  // Drive into roller
+  setDrive(leftSpeed,rightSpeed);
+  setRoller(127);
+
+  pros::delay(300);
+
+  bool stopped = false;
+  short time_elapsed = 0;
+  int start_time=pros::millis();
+
+  while (start_time+350 > pros::millis() && opticalRoller.get_hue()>200){
+    time_elapsed+=20;
+    
+    if(!stopped && time_elapsed>500){
+      stopped=true;
+      setRoller(0);
+      time_elapsed=0;
+    }
+    else if(stopped && time_elapsed>50){
+      stopped=false;
+      setRoller(127);
+      time_elapsed=0;
+    }
+    
+    pros::delay(20);
+  }
+
+  setRoller(127);
+
+  pros::delay(100);
+
+  // Lock current roller rotation
+  setDrive(0);
+  setRoller(0);
 }
 
 

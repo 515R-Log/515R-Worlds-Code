@@ -1,6 +1,7 @@
 #include "Autonomous-Functions/api.hpp"
 #include "Flywheel-Control/api.hpp"
 #include "General/api.hpp"
+#include "Debug/controller.hpp"
 /*-----------------------------------------------------------------------------
  _____   _         _      _          _____  _      _                             _ 
 |  __ \ (_)       | |    | |        / ____|(_)    | |               /\          | |
@@ -98,7 +99,7 @@ void Right_Side_Auto_Stack(){
     // ----- PICK UP DISC ----- //
     setIntake(30); // Spin intake slowly
     chassis.set_drive_pid(25,130); // Drive into three stack
-    chassis.wait_until(20); // Wait until the robot is right in front of the stack
+    chassis.wait_until(21); // Wait until the robot is right in front of the stack
     enableAutoIntake(); // Enable 4 disc detection
 
     chassis.wait_drive(); // Wait for the robot to pick up the one disc
@@ -106,7 +107,7 @@ void Right_Side_Auto_Stack(){
     // ----- CLAIM RIGHT ROLLER ----- //
     chassis.drive_pid(-5,100); // Drive away from the autonomous line
     chassis.turn_pid(-102-resetAngle,100); // Turn towards the field roller
-    chassis.drive_pid(-16,100); // Drive towards the field roller
+    chassis.drive_pid(-17.5,100); // Drive towards the field roller
 
     setRoller(0); // Turn off Roller Motor
     chassis.set_mode(ez::DISABLE); // Prevent EZ Template from overriding the following
@@ -129,11 +130,23 @@ void Right_Side_Auto_Stack(){
     chassis.turn_pid(-132-resetAngle,100); // Turn towards the row of three discs
     enableAutoIntake(); // Enable 4 disc detection
 
-    chassis.drive_pid(47,90); // Pick up row of discs
+    chassis.drive_pid(47,50); // Pick up row of discs
+    chassis.drive_pid(-19,130,false); // Drive into row of discs
 
-    // ----- SCORE DISCS ----- //
-    chassis.turn_pid(-48-resetAngle,100); // Turn to High Goal
-	disableAutoIntake(); // Disable 4 disc detection
-    hailMary(3,MID_DROPOFF); // Score 3 Discs
+    chassis.turn_pid(-13); // Turn towards goal 
+    disableAutoIntake();
+
+    hailMary(3); // Run a command that scores the row of discs
+    setFlywheel(512); // Prepare flywheel to score
+
+    setIntake(127);
+
+    chassis.drive_pid(11,130);
+
+    chassis.drive_pid(-3,130);
+
+    pros::delay(1000);
+
+    hailMary(1);
 
 }
