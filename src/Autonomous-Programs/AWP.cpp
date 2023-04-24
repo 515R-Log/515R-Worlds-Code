@@ -28,9 +28,9 @@ We have two alternative Solo AWP Programs.
 
 -----------------------------------------------------------------------------*/
 
-void Awp(){
+void Awp(bool isRightSet){
 
-  setFlywheel(650); // Prepare flywheel to score
+  setFlywheel(665); // Prepare flywheel to score
   disableAutoIntake();
 
   // ----- CLAIM BOTTOM ROLLER ----- //
@@ -44,9 +44,9 @@ void Awp(){
   chassis.drive_pid(8.5,120); // Drive to a scoring position
 
   disableAutoIntake();
-  chassis.turn_pid(-13,120); // Turn towards the goal
+  chassis.turn_pid(-15-isRightSet*3,120); // Turn towards the goal
 
-  pros::delay(500);
+  pros::delay(400);
 
   hailMary(2,NO_DROPOFF); // Score preloads
   
@@ -62,7 +62,7 @@ void Awp(){
     chassis.set_drive_pid(39, 140); // Drive into discs
     chassis.wait_until(6); // wait until robot has driven 8 inches
     
-    chassis.set_max_speed(15); // Slow down to collect stack of discs
+    chassis.set_max_speed(22); // Slow down to collect stack of discs
     chassis.wait_drive(); // Wait for robot to complete drive movement
     chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0); // Return heading to default state
 
@@ -70,24 +70,24 @@ void Awp(){
   // chassis.drive_pid(39, 40); // Drive into discs
 
   // ----- SCORE DISCS ----- //
-  chassis.set_turn_pid(-33,120); // Turn towards goal
   disableAutoIntake();
-  chassis.wait_drive();
+  chassis.turn_pid(-35-isRightSet*2,120); // Turn towards goal
 
   hailMary(3,NO_DROPOFF); // Score discs
 
-  setFlywheel(560);
+  setFlywheel(568);
   setRoller(0);
 
   // ----- PICK UP DISCS ----- //
   chassis.turn_pid(45, 120); // Turn towards row of discs
-  enableAutoIntake();
+  // enableAutoIntake();
+  setRoller(127);
 
   // Make the drivetrain settle quicker
   chassis.set_pid_constants(&chassis.headingPID, 11, 0, 65, 0);
   chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 500, 500);
 
-  chassis.drive_pid(81, 70); // Move through discs
+  chassis.drive_pid(79, 70); // Move through discs
   chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
   
   disableAutoIntake();

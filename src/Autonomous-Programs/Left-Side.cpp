@@ -29,7 +29,7 @@ We have two alternative Left-side Support Programs.
 
 -----------------------------------------------------------------------------*/
 
-void Left_Side(){
+void Left_Side(bool isRightSet){
     // ----- INITIALIZE AUTONOMOUS ----- //
     motorHold();
     setFlywheel(530);
@@ -48,7 +48,7 @@ void Left_Side(){
 
     setIntake(40);
     chassis.drive_pid(18,130,false); // Drive towards scoring position
-    chassis.turn_pid(-13.5,110); // Turn towards goal
+    chassis.turn_pid(-14.5,110); // Turn towards goal
 
     // while(distIndex.get()>97){
     //     setIntake(-45);

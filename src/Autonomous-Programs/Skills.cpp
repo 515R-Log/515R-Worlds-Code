@@ -132,7 +132,7 @@ void skillsSection(){
 }
 
 // Main Program
-void Skills(){
+void Skills(bool isRightSet){
 
     float end_time = 60-pros::millis()/1000.0; // Find out the time in which the program ends
 

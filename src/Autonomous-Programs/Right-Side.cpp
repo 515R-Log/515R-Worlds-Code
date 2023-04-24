@@ -32,7 +32,7 @@ We have two alternative Right-side Support Programs.
 
 -----------------------------------------------------------------------------*/
 
-void Right_Side(){
+void Right_Side(bool isRightSet){
   // ----- INITIALIZE AUTONOMOUS ----- //
   setFlywheel(540); // Prepare flywheel to score
 
@@ -55,7 +55,7 @@ void Right_Side(){
 
   // ----- SCORE DISCS ----- //
   chassis.drive_pid(-7.5,130,false); // Drive away from autonomus line
-  chassis.turn_pid(98.5); // Turn towards goal
+  chassis.turn_pid(97.5); // Turn towards goal
   hailMary(3); // Run a command that scores the row of discs
 
   disableAutoIntake();
@@ -67,13 +67,13 @@ void Right_Side(){
   chassis.turn_pid(44,110); // Turn towards row of discs
   setRoller(127); // Prepare Intake to pick up discs
 
-  chassis.drive_pid(61,70,false); // Drive into row of discs
+  chassis.drive_pid(61,65,false); // Drive into row of discs
   chassis.drive_pid(-17,130,false); // Drive into row of discs
   chassis.turn_pid(120.5); // Turn towards goal
   disableAutoIntake();
 
   hailMary(3); // Run a command that scores the row of discs
-  setFlywheel(512); // Prepare flywheel to score
+  setFlywheel(515); // Prepare flywheel to score
 
   setIntake(127);
 
@@ -84,16 +84,16 @@ void Right_Side(){
   chassis.drive_pid(21,130);
   // chassis.drive_pid(-20,130);
 
-  chassis.turn_pid(127.5); // Turn towards goal
+  chassis.turn_pid(126.5); // Turn towards goal
 
   hailMary(1);
 }
 
-void Right_Side_Auto_Stack(){
+void Right_Side_Auto_Stack(bool isRightSet){
     
     // ----- INITIALIZE AUTONOMOUS ----- //
     motorHold(); // Enable drivetrain locking
-    setFlywheel(585); // Spin Flywheel at 580RM
+    setFlywheel(578); // Spin Flywheel at 580RM
     short resetAngle = -45; // Reset the Inertial Sensor
 
     // ----- PICK UP DISC ----- //

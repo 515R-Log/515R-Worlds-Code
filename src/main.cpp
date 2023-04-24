@@ -108,18 +108,18 @@ void autonomous() {
 		chassis.enable_odometry();
 		// chassis.set_exit_condition(chassis.turn_exit,  0, 3,  500, 7,   500, 500);
 		// chassis.set_exit_condition(chassis.drive_exit, 20,  50, 300, 150, 500, 500);
-    	Skills();
+    	Skills(false);
       	break;
 
     // ----- SKILLS AUTONOMOUS VARIENT ----- //
     case 2:
-      	Skills();
+      	Skills(false);
       	break;
 
     // ----- WIN POINT ----- //
     case 3:
 		chassis.set_exit_condition(chassis.turn_exit,  30, 3,  500, 7,   500, 500);
-      	Awp();
+      	Awp(true);
       	break;
 
     // ----- WIN POINT VARIENT ----- //
@@ -133,7 +133,7 @@ void autonomous() {
 
     // ----- LEFT SIDE SUPPORT ----- //
     case 5:
-      	Left_Side();
+      	Left_Side(false);
       	break;
 
     // ----- LEFT SIDE SUPPORT VARIENT ----- //
@@ -145,14 +145,13 @@ void autonomous() {
     case 7:
 	chassis.set_exit_condition(chassis.turn_exit,  30, 3,  500, 7,   500, 500);
 
-      	Right_Side();
+      	Right_Side(true);
       	break;
 
     // ----- RIGHT SIDE SUPPORT + AUTO STACK ----- //
     case 8:
-      	Right_Side_Auto_Stack();
+      	Right_Side_Auto_Stack(false);
       	break;
-
   }
 }
 
@@ -173,6 +172,7 @@ void opcontrol() {
 
 	// ----- DEBUG COMMANDS (uncomment to use) ----- //
 	// enableCntrlDebug();
+	enableAutoIntake();
 	// chassis.disable_odometry();
 	// chassis.odom.setPosition(0,0); 
 	// --------------------------------------------- //
@@ -201,7 +201,7 @@ void opcontrol() {
 		setShooterMotor();
 
 		// ----- Intake/Lift/Roller ----- //
-		setRollerMotor();
+		// setRollerMotor();
 
 		// ----- Piston ----- // 
 		setPiston();
