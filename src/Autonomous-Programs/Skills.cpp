@@ -2,6 +2,8 @@
 #include "General/api.hpp"
 #include "Flywheel-Control/api.hpp"
 #include "Debug/controller.hpp"
+
+#include "Autonomous-Programs/api.hpp"
 /*-----------------------------------------------------------------------------
   _____  _     _  _  _                            _         
  / ____|| |   (_)| || |              /\          | |        
@@ -25,6 +27,8 @@ Score - 294
 
 -----------------------------------------------------------------------------*/
 
+bool isRightSet=false;
+
 // Steps 2-3 and 5-6
 void skillsSection(){
 
@@ -38,7 +42,7 @@ void skillsSection(){
     // Drive in front of stack of discs
     chassis.add_point(38.9,23.4,100,true);
     chassis.add_point(47.0,30.9,60);
-    chassis.add_point(77,50,90); // Turn to stack and begin driving forwards
+    chassis.add_point(77,50,70); // Turn to stack and begin driving forwards
     chassis.set_point_pid();
 
     pros::delay(1500);
@@ -79,7 +83,7 @@ void skillsSection(){
     setFlywheel(460); // Set Flywheel Target to 475 RPM
     setIntake(0);
 
-    chassis.set_point_pid(123.2,122.6,90); // Drive through stack of discs
+    chassis.set_point_pid(123.2,122.6,70); // Drive through stack of discs
     chassis.wait_until_y(97); // Wait until right in front of the stack
     chassis.set_max_speed(20); // Slow down drivetrain
 
@@ -94,7 +98,7 @@ void skillsSection(){
     setRoller(-127); // Begin shooting a disc
 
     if(distStack.get()<120)
-        pros::delay(200); // Wait for disc to fire
+        pros::delay(120); // Wait for disc to fire
     setRoller(0); // Stop indexer
 
     skillsRoller(-50,0,350,-50); // Claim roller
@@ -132,7 +136,7 @@ void skillsSection(){
 }
 
 // Main Program
-void Skills(bool isRightSet){
+void Skills(){
 
     float end_time = 60-pros::millis()/1000.0; // Find out the time in which the program ends
 
@@ -160,7 +164,7 @@ void Skills(bool isRightSet){
     // Generate and run (X Y) path to the match load station
     chassis.add_point(38,22); // Out of the way of rollers and walls
     chassis.add_point(64,16.5); // First contact with wall
-    chassis.point_pid(74,16); // Resulting Location
+    chassis.point_pid(73,16); // Resulting Location
 
     chassis.turn_pid(89-7.3-2+0.7,130); // Turn towards goal
 

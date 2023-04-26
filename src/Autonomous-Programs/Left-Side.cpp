@@ -1,6 +1,8 @@
 #include "Autonomous-Functions/api.hpp"
 #include "Flywheel-Control/api.hpp"
 #include "General/api.hpp"
+
+#include "Autonomous-Programs/api.hpp"
 /*-----------------------------------------------------------------------------
  _             __  _          _____  _      _                             _         
 | |           / _|| |        / ____|(_)    | |               /\          | |        
@@ -29,10 +31,10 @@ We have two alternative Left-side Support Programs.
 
 -----------------------------------------------------------------------------*/
 
-void Left_Side(bool isRightSet){
+void Left_Side(){
     // ----- INITIALIZE AUTONOMOUS ----- //
     motorHold();
-    setFlywheel(530);
+    setFlywheel(533);
 
     // ----- CLAIM BOTTOM ROLLER ----- //
     quickRoller(-50,0); // Run Roller Claim function
@@ -48,7 +50,7 @@ void Left_Side(bool isRightSet){
 
     setIntake(40);
     chassis.drive_pid(18,130,false); // Drive towards scoring position
-    chassis.turn_pid(-14.5,110); // Turn towards goal
+    chassis.turn_pid(-16,110); // Turn towards goal
 
     // while(distIndex.get()>97){
     //     setIntake(-45);
@@ -60,7 +62,7 @@ void Left_Side(bool isRightSet){
     hailMary(3,NO_DROPOFF); // Score 3 discs
 
     // ----- PICK UP DISCS ----- //
-    setFlywheel(517); // Set flywheel to 590RPM
+    setFlywheel(522); // Set flywheel to 590RPM
     chassis.turn_pid(46,120); // Turn to 54 degrees
     enableAutoIntake(); // Enable 4 disc detection
 
@@ -73,12 +75,12 @@ void Left_Side(bool isRightSet){
     chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0); // Return heading to default state
 
     // ----- SCORE DISCS ----- //
-    chassis.turn_pid(-31.5,120); // Turn towards goal
+    chassis.turn_pid(-32,120); // Turn towards goal
     pros::delay(200); // Wait for disc to settle in robot
     disableAutoIntake(); // Disable four disc detection
 
     hailMary(3,NO_DROPOFF); // Score 3 discs
-    setFlywheel(490);
+    setFlywheel(492);
 
     setIntake(127);
 

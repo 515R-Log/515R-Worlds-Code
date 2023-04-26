@@ -2,6 +2,8 @@
 #include "Flywheel-Control/api.hpp"
 #include "General/api.hpp"
 #include "Debug/controller.hpp"
+
+#include "Autonomous-Programs/api.hpp"
 /*-----------------------------------------------------------------------------
  _____   _         _      _          _____  _      _                             _ 
 |  __ \ (_)       | |    | |        / ____|(_)    | |               /\          | |
@@ -32,7 +34,7 @@ We have two alternative Right-side Support Programs.
 
 -----------------------------------------------------------------------------*/
 
-void Right_Side(bool isRightSet){
+void Right_Side(){
   // ----- INITIALIZE AUTONOMOUS ----- //
   setFlywheel(540); // Prepare flywheel to score
 
@@ -55,7 +57,7 @@ void Right_Side(bool isRightSet){
 
   // ----- SCORE DISCS ----- //
   chassis.drive_pid(-7.5,130,false); // Drive away from autonomus line
-  chassis.turn_pid(97.5); // Turn towards goal
+  chassis.turn_pid(95); // Turn towards goal
   hailMary(3); // Run a command that scores the row of discs
 
   disableAutoIntake();
@@ -69,7 +71,7 @@ void Right_Side(bool isRightSet){
 
   chassis.drive_pid(61,65,false); // Drive into row of discs
   chassis.drive_pid(-17,130,false); // Drive into row of discs
-  chassis.turn_pid(120.5); // Turn towards goal
+  chassis.turn_pid(119); // Turn towards goal
   disableAutoIntake();
 
   hailMary(3); // Run a command that scores the row of discs
@@ -89,7 +91,7 @@ void Right_Side(bool isRightSet){
   hailMary(1);
 }
 
-void Right_Side_Auto_Stack(bool isRightSet){
+void Right_Side_Auto_Stack(){
     
     // ----- INITIALIZE AUTONOMOUS ----- //
     motorHold(); // Enable drivetrain locking

@@ -139,38 +139,6 @@ void waitButJoystick(int time){
   }
 }
 
-// // ----------------- HAIL MARY DRIVER ----------------- //
-// // Scores 1-3 disks at a given speed
-// // Controller input will force-exit function
-// // Used Exclusively for the Match Load Station
-// void hailMaryDrive(int tarShots, int tarSpeed){
-//   // Turn off Drivetrain and Lift
-//   motorHold();
-//   setLift(0);
-
-//   setFlywheel(440);
-
-//   // Loop through each desired shot
-//   for(int i=0; i<tarShots; i++){
-//     point2 driveJoystics=setDriveJoystics(); // Check controller input
-
-//     bool lastShot= (i>=tarShots-4);
-//     while(shooterMtr.get_velocity()+25-3*lastShot<getFlywheelTarget());
-//     setRoller(-127);
-//     waitButJoystick(230 + 100*lastShot);
-
-//     setRoller(127);
-//     waitButJoystick(140);
-//     if(fabs(driveJoystics.x)>0 || fabs(driveJoystics.y)>0){
-//       motorCoast();
-//       return;
-//     }
-// }
-// // motorCoast();
-
-// }
-
-
 PotMgr delay_rotation('H');
 
 // ----------------- HAIL MARY DRIVER ----------------- //
@@ -256,7 +224,7 @@ void hailMaryDrive(int tarShots, int tarSpeed){
   setRoller(reset_speed);
 
   // short reset_rotation = 4;
-  short reset_rotation = delay_rotation.get_value();
+  short reset_rotation = 40;
 
   // Turn everything on the drivebase off
   motorHold();
@@ -305,56 +273,3 @@ void hailMaryDrive(int tarShots, int tarSpeed){
   motorCoast();
 
 }
-
-// // ----------------- HAIL MARY ----------------- //
-// // Scores a given number of discs
-// // Uses pre-determined RPM as the target for scoring
-// void hailMarySlow(short discs, double indexRPM, int time_out){
-//   // Turn everything on the drivebase off
-//   motorHold();
-//   disableAutoIntake();
-
-//   // Initialize disc counting variables
-//   int discCount=0;
-//   bool discScoring=false;
-
-//   // Delare a timeout for the given time to score
-//   int endTime=pros::millis()+time_out;
-
-//   int timeseres=0;
-
-//   // While all discs have NOT been shot and there is still time remaining
-//   while(discCount<discs && (pros::millis()<endTime || time_out == -1)){
- 
-//     int indexPower=50; // Declare the power to set the Index
-
-//     // If the flywheel is ready to score, send the indexer to score
-//     if(shooterMtr.get_velocity()>indexRPM)
-//       indexPower=-127;
-
-//     // If the disc is about to touch the flywheel, turn off the index.
-//     // This prevents the indexer to coast a second disc into the flywheel
-//     if(distIndex.get()<90){
-//       indexPower=20;
-//       discScoring=true;
-//     }
-//     else if(distIndex.get()>96 && discScoring){
-//       discScoring=false;
-//       discCount++;
-//     }
-
-//     setRoller(indexPower);
-
-//     timeseres+=10;
-//     pros::delay(10);
-//   }
-
-//   std::cout << "" << endl;
-//   std::cout << "" << endl;
-//   std::cout << "" << endl;
-//   std::cout << discScoring << endl;
-//   std::cout << discCount << endl;
-
-//   // Unlock drivetrain and return flywheel RPM back to normal
-//   motorCoast();
-// }

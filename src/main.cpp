@@ -108,18 +108,18 @@ void autonomous() {
 		chassis.enable_odometry();
 		// chassis.set_exit_condition(chassis.turn_exit,  0, 3,  500, 7,   500, 500);
 		// chassis.set_exit_condition(chassis.drive_exit, 20,  50, 300, 150, 500, 500);
-    	Skills(false);
+    	Skills();
       	break;
 
     // ----- SKILLS AUTONOMOUS VARIENT ----- //
     case 2:
-      	Skills(false);
+      	Skills();
       	break;
 
     // ----- WIN POINT ----- //
     case 3:
 		chassis.set_exit_condition(chassis.turn_exit,  30, 3,  500, 7,   500, 500);
-      	Awp(true);
+      	Awp();
       	break;
 
     // ----- WIN POINT VARIENT ----- //
@@ -133,7 +133,7 @@ void autonomous() {
 
     // ----- LEFT SIDE SUPPORT ----- //
     case 5:
-      	Left_Side(false);
+      	Left_Side();
       	break;
 
     // ----- LEFT SIDE SUPPORT VARIENT ----- //
@@ -145,12 +145,12 @@ void autonomous() {
     case 7:
 	chassis.set_exit_condition(chassis.turn_exit,  30, 3,  500, 7,   500, 500);
 
-      	Right_Side(true);
+      	Right_Side();
       	break;
 
     // ----- RIGHT SIDE SUPPORT + AUTO STACK ----- //
     case 8:
-      	Right_Side_Auto_Stack(false);
+      	Right_Side_Auto_Stack();
       	break;
   }
 }
@@ -165,23 +165,43 @@ void opcontrol() {
 
 	initializeDriver(); // Initialize Driver
 
+	disableAutoIntake();
+
+	// ----- DEBUG COMMANDS (uncomment to use) ----- //
+	// enableCntrlDebug();
+	// enableAutoIntake();
+	// chassis.disable_odometry();
+	// chassis.odom.setPosition(0,0); 
+	// --------------------------------------------- //
+	
+	// ----- SKILLS DRIVER (uncomment to use) ----- //
+	// setFlywheel(425); // Start spinnign flywheel to match load
+	// pros::delay(1500); // Wait for flywheel to spin up
+	// hailMaryDrive(9,100); // Begin match loading
+	// if(false)
+	// -------------------------------------------- // 
+
+	// ----- SKILLS AUTONOMOUS (uncomment to use) ----- //
+	// chassis.enable_odometry();
+	// pros::Task runSkills(Skills);
+	// while(true){
+    // 	point2 driveJoystics=setDriveJoystics(); // Check controller input
+	//     if(fabs(driveJoystics.x)>0 || fabs(driveJoystics.y)>0){
+    //   		motorCoast();
+    //   		break;
+    // 	}
+	// 	pros::delay(10);
+	// }
+	// runSkills.suspend();
+	// runSkills.remove();
+	// if(false)
+	// ------------------------------------------------ //
+
 	// ----- Initialize Defector Pt.1 ----- //
 	setPiston("Deflector",UP); // Send piston upwards 
 	bool deflectorInit=false; // Determine if the deflector has been initialized
 	short deflectorInitTime=0; // Declare amount of time that has been elapsed in initialization
 
-	// ----- DEBUG COMMANDS (uncomment to use) ----- //
-	// enableCntrlDebug();
-	enableAutoIntake();
-	// chassis.disable_odometry();
-	// chassis.odom.setPosition(0,0); 
-	// --------------------------------------------- //
-	
-	// ----- SKILLS DRIVER (uncomment to use) ---- //
-	// setFlywheel(425); // Start spinnign flywheel to match load
-	// pros::delay(1500); // Wait for flywheel to spin up
-	// hailMaryDrive(9,100); // Begin match loading
-	// ------------------------------------------- // 
 
 	while (true) {
 		// ----- Initialize Deflector Pt.2 ----- //
@@ -201,7 +221,7 @@ void opcontrol() {
 		setShooterMotor();
 
 		// ----- Intake/Lift/Roller ----- //
-		// setRollerMotor();
+		setRollerMotor();
 
 		// ----- Piston ----- // 
 		setPiston();

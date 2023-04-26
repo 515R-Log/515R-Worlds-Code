@@ -2,6 +2,8 @@
 #include "Flywheel-Control/api.hpp"
 #include "General/api.hpp"
 #include "Debug/controller.hpp"
+
+#include "Autonomous-Programs/api.hpp"
 /*-----------------------------------------------------------------------------
   _____         _                   __          __ _____                        _         
  / ____|       | |                /\\ \        / /|  __ \          /\          | |        
@@ -28,7 +30,7 @@ We have two alternative Solo AWP Programs.
 
 -----------------------------------------------------------------------------*/
 
-void Awp(bool isRightSet){
+void Awp(){
 
   setFlywheel(665); // Prepare flywheel to score
   disableAutoIntake();

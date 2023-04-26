@@ -14,11 +14,12 @@
 // Autonomous Selector Options
 // These names are what display on the controller screen when checking the right slot
 enum autoTitles{ SKILLS=1, SKILLS_2=2, AWP=3, AWP_2=4, LEFT_SIDE=5, LEFT_SIDE_AUTO_STACK=6, RIGHT_SIDE=7, RIGHT_SIDE_AUTO_STACK=8};
+extern bool isRightSet;
 
-void Awp(bool isRightSet); // Solo AWP
+void Awp(); // Solo AWP
 void Awp_Auto_Stack(); // Solo AWP + 3 Stack on Auto Line
-void Left_Side(bool isRightSet); // Left Side Support
+void Left_Side(); // Left Side Support
 void Left_Side_Auto_Stack(); // Left Side Support + 3 Stack on Auto Line
-void Right_Side(bool isRightSet); // Right Side Support
-void Right_Side_Auto_Stack(bool isRightSet); // Right Side Support + 3 Stack on Auto Line
-void Skills(bool isRightSet); // Skills Autonomous
+void Right_Side(); // Right Side Support
+void Right_Side_Auto_Stack(); // Right Side Support + 3 Stack on Auto Line
+void Skills(); // Skills Autonomous
