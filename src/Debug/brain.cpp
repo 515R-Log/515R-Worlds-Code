@@ -29,7 +29,8 @@ pros::Motor fsfs(18);
 
 void brainPosAyncIterate(){
 	pros::lcd::print(0,"515R Revision"); // Print Title on line 1
-  pros::lcd::print(1,"Speed:           %f",fsfs.get_actual_velocity()); // Print right encoder value on line 4
+  // pros::lcd::print(1,"Speed:           %f",fsfs.get_actual_velocity()); // Print right encoder value on line 4
+  pros::lcd::print(1,"Angle:           %f",chassis.imu.get_rotation()); // Print right encoder value on line 4
   // pros::lcd::print(2, "XPosition(in):  %f", chassis.odom.getX()); // Print X position on line 5
   // pros::lcd::print(3, "YPosition (in): %f", chassis.odom.getY()); // Print Y position on line 6
   // pros::lcd::print(4, "Angle:          %f", chassis.odom.getTheta()); // Print theta on line 7

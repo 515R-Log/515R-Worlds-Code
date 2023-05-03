@@ -42,8 +42,12 @@ void taskFunctions(){
 				int automas = std::floor(autoSwitches1.get_value()); // Get index of current autonomous option
 				autoTitles currentMode = static_cast<autoTitles>(automas); // Store autonomous option with 'AutoTitles' data type
 				printRow(1,stringify(currentMode)); // Print out the name of the autonomous 
+
+				
 			}
-			
+
+			brainPosAyncIterate();
+
 		}
 
 		liftAsyncIterate();

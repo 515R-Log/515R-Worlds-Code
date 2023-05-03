@@ -63,11 +63,11 @@ void Left_Side(){
 
     // ----- PICK UP DISCS ----- //
     setFlywheel(522); // Set flywheel to 590RPM
-    chassis.turn_pid(46,120); // Turn to 54 degrees
+    chassis.turn_pid(46.5,120); // Turn to 54 degrees
     enableAutoIntake(); // Enable 4 disc detection
 
     chassis.set_pid_constants(&chassis.headingPID, 11, 0, 65, 0); // Prevent whiplash from turn
-    chassis.set_drive_pid(33, 100,false); // Drive into discs
+    chassis.set_drive_pid(32, 100,false); // Drive into discs
     chassis.wait_until(7); // wait until robot has driven 8 inches
     
     chassis.set_max_speed(25); // Slow down to collect stack of discs
@@ -75,7 +75,7 @@ void Left_Side(){
     chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0); // Return heading to default state
 
     // ----- SCORE DISCS ----- //
-    chassis.turn_pid(-32,120); // Turn towards goal
+    chassis.turn_pid(-31.5,120); // Turn towards goal
     pros::delay(200); // Wait for disc to settle in robot
     disableAutoIntake(); // Disable four disc detection
 
@@ -87,13 +87,18 @@ void Left_Side(){
     chassis.drive_pid(11, 100,false);
     chassis.drive_pid(-5, 100,false);
 
-    chassis.turn_pid(105);
-    chassis.drive_pid(19, 100,false);
-    chassis.drive_pid(-19, 100,false);
+    pros::delay(1000);
 
-    chassis.turn_pid(-31.5,120); // Turn towards goal
+    // chassis.turn_pid(105);
+    // chassis.drive_pid(19, 100,false);
+    // chassis.drive_pid(-19, 100,false);
+
+    // chassis.turn_pid(-31.5,120); // Turn towards goal
     hailMary(3,NO_DROPOFF); // Score 3 discs
 
+
+    chassis.turn_pid(-15);
+    chassis.drive_pid(-30,130);
 
     pros::delay(100000);
 

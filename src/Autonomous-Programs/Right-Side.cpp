@@ -102,7 +102,8 @@ void Right_Side_Auto_Stack(){
     setIntake(30); // Spin intake slowly
     chassis.set_drive_pid(25,130); // Drive into three stack
     chassis.wait_until(21); // Wait until the robot is right in front of the stack
-    enableAutoIntake(); // Enable 4 disc detection
+    // enableAutoIntake(); // Enable 4 disc detection
+    setIntake(127);
 
     chassis.wait_drive(); // Wait for the robot to pick up the one disc
 
@@ -130,8 +131,9 @@ void Right_Side_Auto_Stack(){
     // ----- PICK UP DISCS ----- //
     setFlywheel(535); // Set flywheel to 530RPM
     chassis.turn_pid(-132-resetAngle,100); // Turn towards the row of three discs
-    enableAutoIntake(); // Enable 4 disc detection
+    // enableAutoIntake(); // Enable 4 disc detection
 
+    setIntake(127);
     chassis.drive_pid(47,50); // Pick up row of discs
     chassis.drive_pid(-19,130,false); // Drive into row of discs
 
